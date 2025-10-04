@@ -1,0 +1,53 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Player = /** @class */ (function (_super) {
+    __extends(Player, _super);
+    function Player(x, y) {
+        var _this = _super.call(this, x, y) || this;
+        _this.speed = 3;
+        return _this;
+    }
+    Player.prototype.update = function (game, delta) {
+        var _a;
+        var keys = {
+            left: game.getKey("a") || game.getKey("arrowleft"),
+            right: game.getKey("d") || game.getKey("arrowright"),
+            up: game.getKey("w") || game.getKey("arrowup"),
+            down: game.getKey("s") || game.getKey("arrowdown")
+        };
+        var angles = [
+            { active: keys.left, angle: Math.PI },
+            { active: keys.down, angle: Math.PI / 2 },
+            { active: keys.right, angle: 0 },
+            { active: keys.up, angle: Math.PI * 3 / 2 },
+            { active: keys.left && keys.down, angle: Math.PI * 0.75 },
+            { active: keys.left && keys.up, angle: Math.PI * 1.25 },
+            { active: keys.right && keys.down, angle: Math.PI * 0.25 },
+            { active: keys.right && keys.up, angle: Math.PI * 1.75 }
+        ];
+        angles.reverse();
+        var dir = (_a = angles.find(function (val) { return val.active; })) === null || _a === void 0 ? void 0 : _a.angle;
+        if (typeof dir !== "undefined") {
+            this.x += Math.cos(dir) * this.speed * delta;
+            this.y += Math.sin(dir) * this.speed * delta;
+        }
+    };
+    Player.prototype.render = function (game, ctx) {
+        ctx.fillStyle = "black";
+        ctx.fillRect(game.renderX(this.x) - 15, game.renderY(this.y) - 25, 30, 50);
+    };
+    return Player;
+}(Entity));

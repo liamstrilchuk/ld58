@@ -1,8 +1,47 @@
 var Game = /** @class */ (function () {
     function Game(ctx) {
         this.keys = {};
+        this.mouseDown = false;
+        this.mousePos = { x: 0, y: 0 };
+        this.player = new Player(0, 0);
+        this.lastFrameTime = new Date().getTime();
+        this.graphics = new GraphicsLoader();
+        this.world = new World();
+        this.TILE_WIDTH = 31;
+        this.TILE_HEIGHT = 15;
+        this.TILE_SCALE = 6;
         this.ctx = ctx;
+        ctx.imageSmoothingEnabled = false;
     }
+    Game.prototype.start = function () {
+        this.update();
+    };
+    Game.prototype.asset = function (name) {
+        return this.graphics.assets[name] || null;
+    };
+    Game.prototype.update = function () {
+        var currentTime = new Date().getTime();
+        var delta = (currentTime - this.lastFrameTime) / (1000 / 60);
+        this.lastFrameTime = currentTime;
+        this.player.update(this, delta);
+        this.render();
+        window.requestAnimationFrame(this.update.bind(this));
+    };
+    Game.prototype.render = function () {
+        this.ctx.fillStyle = "#8db3c5";
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.world.render(this, this.ctx);
+        this.player.render(this, this.ctx);
+    };
+    Game.prototype.renderX = function (x) {
+        return x + this.ctx.canvas.width / 2 - this.player.x;
+    };
+    Game.prototype.renderY = function (y) {
+        return y + this.ctx.canvas.height / 2 - this.player.y;
+    };
+    Game.prototype.calculateHoveredTile = function () {
+        return null;
+    };
     Game.prototype.getKey = function (key) {
         return this.keys[key] || false;
     };
@@ -11,6 +50,15 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.onKeyUp = function (key) {
         this.keys[key] = false;
+    };
+    Game.prototype.onMouseDown = function () {
+        this.mouseDown = true;
+    };
+    Game.prototype.onMouseUp = function () {
+        this.mouseDown = false;
+    };
+    Game.prototype.onMouseMove = function (x, y) {
+        this.mousePos = { x: x, y: y };
     };
     return Game;
 }());
