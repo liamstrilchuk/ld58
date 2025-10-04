@@ -1,5 +1,6 @@
 class Player extends Entity {
 	private speed: number = 3;
+	private inventory: { [key: string]: number } = {};
 
 	constructor(x: number, y: number) {
 		super(x, y);
@@ -51,7 +52,11 @@ class Player extends Entity {
 		ctx.fillRect(game.renderX(this.x) - 15, game.renderY(this.y) - 25, 30, 50);
 	}
 
-	public getPlayerTile() {
+	public addToInventory(name: string, amount: number) {
+		if (!this.inventory[name]) {
+			this.inventory[name] = 0;
+		}
 
+		this.inventory[name] += amount;
 	}
 }

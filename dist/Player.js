@@ -18,6 +18,7 @@ var Player = /** @class */ (function (_super) {
     function Player(x, y) {
         var _this = _super.call(this, x, y) || this;
         _this.speed = 3;
+        _this.inventory = {};
         return _this;
     }
     Player.prototype.update = function (game, delta) {
@@ -58,7 +59,11 @@ var Player = /** @class */ (function (_super) {
         ctx.fillStyle = "black";
         ctx.fillRect(game.renderX(this.x) - 15, game.renderY(this.y) - 25, 30, 50);
     };
-    Player.prototype.getPlayerTile = function () {
+    Player.prototype.addToInventory = function (name, amount) {
+        if (!this.inventory[name]) {
+            this.inventory[name] = 0;
+        }
+        this.inventory[name] += amount;
     };
     return Player;
 }(Entity));

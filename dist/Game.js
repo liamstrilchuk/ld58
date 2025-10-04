@@ -7,12 +7,17 @@ var Game = /** @class */ (function () {
         this.lastFrameTime = new Date().getTime();
         this.graphics = new GraphicsLoader();
         this.world = new World(this);
+        this.currentAction = null;
+        this.entities = [];
         this.buttons = [];
         this.TILE_WIDTH = 31;
         this.TILE_HEIGHT = 15;
         this.TILE_SCALE = 6;
         this.ctx = ctx;
     }
+    Game.prototype.addEntity = function (entity) {
+        this.entities.push(entity);
+    };
     Game.prototype.start = function () {
         this.update();
     };
@@ -20,21 +25,34 @@ var Game = /** @class */ (function () {
         return this.graphics.assets[name] || null;
     };
     Game.prototype.update = function () {
+        var _a;
         var currentTime = new Date().getTime();
         var delta = (currentTime - this.lastFrameTime) / (1000 / 60);
         this.lastFrameTime = currentTime;
         this.player.update(this, delta);
+        for (var i = this.entities.length - 1; i > -1; i--) {
+            if (this.entities[i].update(this, delta)) {
+                this.entities.splice(i, 1);
+            }
+        }
+        if ((_a = this.currentAction) === null || _a === void 0 ? void 0 : _a.update(this, delta)) {
+            this.currentAction = null;
+        }
         this.calculateHoveredTile();
         this.render();
         window.requestAnimationFrame(this.update.bind(this));
     };
     Game.prototype.render = function () {
         var _this = this;
+        var _a;
         this.ctx.fillStyle = "#8db3c5";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.world.render(this, this.ctx);
         this.player.render(this, this.ctx);
+        this.entities.forEach(function (entity) { return entity.render(game, _this.ctx); });
+        this.world.renderAfter(this, this.ctx);
         this.buttons.forEach(function (button) { return button.render(_this, _this.ctx); });
+        (_a = this.currentAction) === null || _a === void 0 ? void 0 : _a.render(this, this.ctx);
     };
     Game.prototype.renderX = function (x) {
         return x + this.ctx.canvas.width / 2 - this.player.x;
@@ -83,6 +101,11 @@ var Game = /** @class */ (function () {
         this.mouseDown = true;
         var button = this.findHoveredButton();
         if (button) {
+            if (this.currentAction || !this.world.selectedTile) {
+                return;
+            }
+            this.currentAction = new Action(this.world.selectedTile, button.action);
+            this.world.selectedTile = null;
             return;
         }
         this.world.selectedTile = this.world.hoveredTile;

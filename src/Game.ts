@@ -3,10 +3,12 @@ class Game {
 	private keys: { [key: string]: boolean } = {};
 	private mouseDown: boolean = false;
 	private mousePos: { x: number, y: number } = { x: 0, y: 0 };
-	private player: Player = new Player(0, 0);
+	public player: Player = new Player(0, 0);
 	private lastFrameTime: number = new Date().getTime();
 	private graphics = new GraphicsLoader();
 	private world = new World(this);
+	private currentAction: Action = null;
+	private entities: Entity[] = [];
 	public buttons: InterfaceButton[] = [];
 
 	public TILE_WIDTH = 31;
@@ -15,6 +17,10 @@ class Game {
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
+	}
+
+	public addEntity(entity: Entity) {
+		this.entities.push(entity);
 	}
 
 	public start() {
@@ -31,6 +37,16 @@ class Game {
 		this.lastFrameTime = currentTime;
 
 		this.player.update(this, delta);
+		
+		for (let i = this.entities.length - 1; i > -1; i--) {
+			if (this.entities[i].update(this, delta)) {
+				this.entities.splice(i, 1);
+			}
+		}
+
+		if (this.currentAction?.update(this, delta)) {
+			this.currentAction = null;
+		}
 
 		this.calculateHoveredTile();
 		this.render();
@@ -44,8 +60,11 @@ class Game {
 
 		this.world.render(this, this.ctx);
 		this.player.render(this, this.ctx);
+		this.entities.forEach(entity => entity.render(game, this.ctx));
+		this.world.renderAfter(this, this.ctx);
 
 		this.buttons.forEach(button => button.render(this, this.ctx));
+		this.currentAction?.render(this, this.ctx);
 	}
 
 	public renderX(x: number): number {
@@ -111,6 +130,11 @@ class Game {
 
 		const button = this.findHoveredButton();
 		if (button) {
+			if (this.currentAction || !this.world.selectedTile) {
+				return;
+			}
+			this.currentAction = new Action(this.world.selectedTile, button.action);
+			this.world.selectedTile = null;
 			return;
 		}
 
