@@ -6,7 +6,6 @@ class Game {
 	public player: Player = new Player(0, 0);
 	private lastFrameTime: number = new Date().getTime();
 	private graphics = new GraphicsLoader();
-	private world = new World(this);
 	private currentAction: Action = null;
 	private entities: Entity[] = [];
 	public buttons: InterfaceButton[] = [];
@@ -14,6 +13,12 @@ class Game {
 	public TILE_WIDTH = 31;
 	public TILE_HEIGHT = 15;
 	public TILE_SCALE = 6;
+
+	public frame = 0;
+	private world = new World(this);
+
+	public hoeUnlocked = false;
+	public bookUnlocked = true;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
@@ -32,6 +37,7 @@ class Game {
 	}
 
 	private update() {
+		this.frame++;
 		const currentTime = new Date().getTime();
 		const delta = (currentTime - this.lastFrameTime) / (1000 / 60);
 		this.lastFrameTime = currentTime;
@@ -65,6 +71,34 @@ class Game {
 
 		this.buttons.forEach(button => button.render(this, this.ctx));
 		this.currentAction?.render(this, this.ctx);
+		this.renderInterface();
+	}
+
+	private renderInterface() {
+		let index = 0;
+		for (const item in this.player.inventory) {
+			if (this.player.inventory[item] > 0) {
+				this.ctx.drawImage(
+					this.asset("inventory_item"),
+					index * 85 + 5, this.ctx.canvas.height - 85,
+					80, 80
+				);
+				this.ctx.drawImage(
+					this.asset(Item.itemData[item]?.asset),
+					index * 85 + 13, this.ctx.canvas.height - 70,
+					60, 60
+				);
+				this.ctx.fillStyle = "black";
+				this.ctx.textAlign = "left";
+				this.ctx.font = "bold 25px Garamond";
+				this.ctx.fillText(
+					this.player.inventory[item].toString(),
+					index * 85 + 19,
+					this.ctx.canvas.height - 22
+				);
+				index++;
+			}
+		}
 	}
 
 	public renderX(x: number): number {

@@ -34,16 +34,20 @@ var World = /** @class */ (function () {
             }
         }
         this.structures.push(new House(game, Math.floor(this.WORLD_SIZE / 2), Math.floor(this.WORLD_SIZE / 2)));
+        game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT;
     };
     World.prototype.determineTileType = function (x, y) {
-        var val = Math.abs(noise.perlin2(x / 35, y / 35));
-        var val2 = Math.abs(noise.perlin2(x / 50 + 123, y / 50 + 123));
+        var val = Math.abs(noise.perlin2(x / 50, y / 50));
+        var val2 = Math.abs(noise.perlin2(x / 100 + 123, y / 100 + 123));
         var combined = (val + val2) / 2;
         if (combined < 0.1) {
             if (Math.random() < 0.05) {
                 return "water_flower";
             }
             return "water";
+        }
+        else if (combined < 0.12) {
+            return "sand";
         }
         else {
             if (Math.random() < 0.3) {

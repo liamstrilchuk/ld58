@@ -22,6 +22,10 @@ class Tile {
 	private determineImage(game: Game) {
 		this.image = game.asset("blank_tile");
 
+		if (this.type === "sand") {
+			this.image = game.asset("sand_tile");
+		}
+
 		if (this.type === "tilled") {
 			this.image = game.asset("tilled_tile");
 		}
@@ -56,6 +60,9 @@ class Tile {
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D, isSelected: boolean, isHovered: boolean, structures: Structure[]) {
+		if (game.frame % 80 === 0 && this.type === "water") {
+			this.determineImage(game);
+		}
 		const { x: renderX, y: renderY } = Tile.renderPos(game, this.x, this.y);
 
 		if (renderX < -game.TILE_SCALE * game.TILE_WIDTH || renderX > ctx.canvas.width + game.TILE_SCALE * game.TILE_WIDTH ||
@@ -119,7 +126,7 @@ class Tile {
 	}
 
 	public createButtons(game: Game) {
-		const options = Tile.getOptionsByType(this.type);
+		const options = Tile.getOptionsByType(game, this.type);
 		const renderPos = Tile.renderPos(game, this.x, this.y);
 		const Tw = game.TILE_WIDTH * game.TILE_SCALE;
 
@@ -148,7 +155,7 @@ class Tile {
 		}
 	}
 
-	static getOptionsByType(type: string): string[] {
+	static getOptionsByType(game: Game, type: string): string[] {
 		const options: string[] = [];
 
 		switch (type) {
@@ -158,8 +165,20 @@ class Tile {
 			case "flower":
 				options.push("till", "harvest");
 				break;
+			case "water_flower":
+				options.push("harvest");
+				break;
+			case "red_flower":
+				options.push("harvest");
+				break;
 		}
 
-		return options;
+		return options.filter(opt => {
+			if (opt === "till" && !game.hoeUnlocked) {
+				return false;
+			}
+
+			return true;
+		});
 	}
 }

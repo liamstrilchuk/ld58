@@ -38,9 +38,24 @@ var Item = /** @class */ (function (_super) {
         return false;
     };
     Item.prototype.render = function (game, ctx) {
+        var _a;
         var x = game.renderX(this.x), y = game.renderY(this.y);
-        ctx.fillStyle = "black";
-        ctx.fillRect(x - 10, y - 10, 20, 20);
+        var asset = game.asset((_a = Item.itemData[this.item]) === null || _a === void 0 ? void 0 : _a.asset);
+        ctx.drawImage(asset, x - 25, y - 25, 50, asset.height / asset.width * 50);
+    };
+    Item.itemData = {
+        "flower": {
+            "asset": "red_flower_icon",
+            "name": "Daisy"
+        },
+        "red_flower": {
+            "asset": "red_flower_icon",
+            "name": "Rose"
+        },
+        "water_flower": {
+            "asset": "water_flower_icon",
+            "name": "Water Lily"
+        }
     };
     return Item;
 }(Entity));

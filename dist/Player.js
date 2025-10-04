@@ -54,6 +54,7 @@ var Player = /** @class */ (function (_super) {
         if (game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + newY)) {
             this.y += newY;
         }
+        return false;
     };
     Player.prototype.render = function (game, ctx) {
         ctx.fillStyle = "black";

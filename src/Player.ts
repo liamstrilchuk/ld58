@@ -1,12 +1,12 @@
 class Player extends Entity {
 	private speed: number = 3;
-	private inventory: { [key: string]: number } = {};
+	public inventory: { [key: string]: number } = {};
 
 	constructor(x: number, y: number) {
 		super(x, y);
 	}
 
-	public update(game: Game, delta: number): void {
+	public update(game: Game, delta: number): boolean {
 		const keys = {
 			left: game.getKey("a") || game.getKey("arrowleft"),
 			right: game.getKey("d") || game.getKey("arrowright"),
@@ -45,6 +45,8 @@ class Player extends Entity {
 		if (game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + newY)) {
 			this.y += newY;
 		}
+
+		return false;
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D): void {

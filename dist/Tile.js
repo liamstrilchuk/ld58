@@ -11,6 +11,9 @@ var Tile = /** @class */ (function () {
     };
     Tile.prototype.determineImage = function (game) {
         this.image = game.asset("blank_tile");
+        if (this.type === "sand") {
+            this.image = game.asset("sand_tile");
+        }
         if (this.type === "tilled") {
             this.image = game.asset("tilled_tile");
         }
@@ -40,6 +43,9 @@ var Tile = /** @class */ (function () {
         }
     };
     Tile.prototype.render = function (game, ctx, isSelected, isHovered, structures) {
+        if (game.frame % 80 === 0 && this.type === "water") {
+            this.determineImage(game);
+        }
         var _a = Tile.renderPos(game, this.x, this.y), renderX = _a.x, renderY = _a.y;
         if (renderX < -game.TILE_SCALE * game.TILE_WIDTH || renderX > ctx.canvas.width + game.TILE_SCALE * game.TILE_WIDTH ||
             renderY < -game.TILE_SCALE * game.TILE_HEIGHT || renderY > ctx.canvas.height + game.TILE_SCALE * game.TILE_HEIGHT) {
@@ -86,7 +92,7 @@ var Tile = /** @class */ (function () {
         };
     };
     Tile.prototype.createButtons = function (game) {
-        var options = Tile.getOptionsByType(this.type);
+        var options = Tile.getOptionsByType(game, this.type);
         var renderPos = Tile.renderPos(game, this.x, this.y);
         var Tw = game.TILE_WIDTH * game.TILE_SCALE;
         switch (options.length) {
@@ -113,7 +119,7 @@ var Tile = /** @class */ (function () {
                 break;
         }
     };
-    Tile.getOptionsByType = function (type) {
+    Tile.getOptionsByType = function (game, type) {
         var options = [];
         switch (type) {
             case "grass":
@@ -122,8 +128,19 @@ var Tile = /** @class */ (function () {
             case "flower":
                 options.push("till", "harvest");
                 break;
+            case "water_flower":
+                options.push("harvest");
+                break;
+            case "red_flower":
+                options.push("harvest");
+                break;
         }
-        return options;
+        return options.filter(function (opt) {
+            if (opt === "till" && !game.hoeUnlocked) {
+                return false;
+            }
+            return true;
+        });
     };
     Tile.recessedTypes = ["water", "water_flower"];
     return Tile;

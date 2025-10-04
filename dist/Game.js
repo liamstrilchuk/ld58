@@ -6,13 +6,16 @@ var Game = /** @class */ (function () {
         this.player = new Player(0, 0);
         this.lastFrameTime = new Date().getTime();
         this.graphics = new GraphicsLoader();
-        this.world = new World(this);
         this.currentAction = null;
         this.entities = [];
         this.buttons = [];
         this.TILE_WIDTH = 31;
         this.TILE_HEIGHT = 15;
         this.TILE_SCALE = 6;
+        this.frame = 0;
+        this.world = new World(this);
+        this.hoeUnlocked = false;
+        this.bookUnlocked = true;
         this.ctx = ctx;
     }
     Game.prototype.addEntity = function (entity) {
@@ -26,6 +29,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.update = function () {
         var _a;
+        this.frame++;
         var currentTime = new Date().getTime();
         var delta = (currentTime - this.lastFrameTime) / (1000 / 60);
         this.lastFrameTime = currentTime;
@@ -53,6 +57,22 @@ var Game = /** @class */ (function () {
         this.world.renderAfter(this, this.ctx);
         this.buttons.forEach(function (button) { return button.render(_this, _this.ctx); });
         (_a = this.currentAction) === null || _a === void 0 ? void 0 : _a.render(this, this.ctx);
+        this.renderInterface();
+    };
+    Game.prototype.renderInterface = function () {
+        var _a;
+        var index = 0;
+        for (var item in this.player.inventory) {
+            if (this.player.inventory[item] > 0) {
+                this.ctx.drawImage(this.asset("inventory_item"), index * 85 + 5, this.ctx.canvas.height - 85, 80, 80);
+                this.ctx.drawImage(this.asset((_a = Item.itemData[item]) === null || _a === void 0 ? void 0 : _a.asset), index * 85 + 13, this.ctx.canvas.height - 70, 60, 60);
+                this.ctx.fillStyle = "black";
+                this.ctx.textAlign = "left";
+                this.ctx.font = "bold 25px Garamond";
+                this.ctx.fillText(this.player.inventory[item].toString(), index * 85 + 19, this.ctx.canvas.height - 22);
+                index++;
+            }
+        }
     };
     Game.prototype.renderX = function (x) {
         return x + this.ctx.canvas.width / 2 - this.player.x;

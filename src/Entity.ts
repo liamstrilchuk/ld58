@@ -12,6 +12,20 @@ abstract class Entity {
 }
 
 class Item extends Entity {
+	public static itemData = {
+		"flower": {
+			"asset": "red_flower_icon",
+			"name": "Daisy"
+		},
+		"red_flower": {
+			"asset": "red_flower_icon",
+			"name": "Rose"
+		},
+		"water_flower": {
+			"asset": "water_flower_icon",
+			"name": "Water Lily"
+		}
+	};
 	public item: string;
 
 	constructor(x: number, y: number, name: string) {
@@ -35,7 +49,7 @@ class Item extends Entity {
 
 	public render(game: Game, ctx: CanvasRenderingContext2D): void {
 		const x = game.renderX(this.x), y = game.renderY(this.y);
-		ctx.fillStyle = "black";
-		ctx.fillRect(x - 10, y - 10, 20, 20);
+		const asset = game.asset(Item.itemData[this.item]?.asset);
+		ctx.drawImage(asset, x - 25, y - 25, 50, asset.height / asset.width * 50);
 	}
 }

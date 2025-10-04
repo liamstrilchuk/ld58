@@ -33,16 +33,30 @@ class Action {
 		ctx.fillRect(x + 2 + Tw / 4, y - 28, (Tw / 2 - 4) * this.progress / Action.actionTimes[this.action], 11);
 	}
 
+	private addItem(game: Game, name: string) {
+		let { x, y } = Tile.renderPos(game, this.tile.x, this.tile.y);
+		game.addEntity(
+			new Item(
+				x + game.player.x - game.ctx.canvas.width / 2 + game.TILE_SCALE * game.TILE_WIDTH / 2,
+				y + game.player.y - game.ctx.canvas.height / 2 + game.TILE_SCALE * game.TILE_HEIGHT / 2,
+				name
+			)
+		);
+	}
+
 	private onCompletion(game: Game) {
 		if (this.tile.type === "flower" && this.action === "harvest") {
-			let { x, y } = Tile.renderPos(game, this.tile.x, this.tile.y);
-			game.addEntity(
-				new Item(
-					x + game.player.x - game.ctx.canvas.width / 2 + game.TILE_SCALE * game.TILE_WIDTH / 2,
-					y + game.player.y - game.ctx.canvas.height / 2 + game.TILE_SCALE * game.TILE_HEIGHT / 2,
-					"flower"
-				)
-			);
+			this.addItem(game, "flower");
+			this.tile.changeType(game, "grass");
+		}
+
+		if (this.tile.type === "water_flower" && this.action === "harvest") {
+			this.addItem(game, "water_flower");
+			this.tile.changeType(game, "water");
+		}
+
+		if (this.tile.type === "red_flower" && this.action === "harvest") {
+			this.addItem(game, "red_flower");
 			this.tile.changeType(game, "grass");
 		}
 
