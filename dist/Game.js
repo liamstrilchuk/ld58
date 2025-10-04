@@ -6,7 +6,7 @@ var Game = /** @class */ (function () {
         this.player = new Player(0, 0);
         this.lastFrameTime = new Date().getTime();
         this.graphics = new GraphicsLoader();
-        this.world = new World();
+        this.world = new World(this);
         this.TILE_WIDTH = 31;
         this.TILE_HEIGHT = 15;
         this.TILE_SCALE = 6;
@@ -24,6 +24,7 @@ var Game = /** @class */ (function () {
         var delta = (currentTime - this.lastFrameTime) / (1000 / 60);
         this.lastFrameTime = currentTime;
         this.player.update(this, delta);
+        this.calculateHoveredTile();
         this.render();
         window.requestAnimationFrame(this.update.bind(this));
     };
@@ -39,8 +40,20 @@ var Game = /** @class */ (function () {
     Game.prototype.renderY = function (y) {
         return y + this.ctx.canvas.height / 2 - this.player.y;
     };
-    Game.prototype.calculateHoveredTile = function () {
+    Game.prototype.getTileAtPos = function (rx, ry) {
+        var Cw = this.ctx.canvas.width, Ch = this.ctx.canvas.height;
+        var Tw = this.TILE_WIDTH, Th = this.TILE_HEIGHT, Ts = this.TILE_SCALE;
+        var C1 = Th * 1 / 2 - 2.25, W = Ts * Tw, H = Ts * Th, C2 = Ts * (1 / 2 * Tw - 0.5);
+        var Px = this.player.x, Py = this.player.y, Rx = rx - this.TILE_WIDTH * this.TILE_SCALE / 2, Ry = ry;
+        var y = (Ry + 1 / 2 * H - 1 / 2 * Ch + Py - (Rx + 1 / 2 * W - 1 / 2 * Cw + Px) / C2 * Ts * C1) / (Ts * C1 + Ts * C1 * H / C2);
+        var x = (Rx + (y * H) + (1 / 2 * W) - 1 / 2 * Cw + Px) / C2;
+        if (0 <= x && x < this.world.WORLD_SIZE && 0 <= y && y < this.world.WORLD_SIZE) {
+            return this.world.grid[Math.floor(x)][Math.floor(y)];
+        }
         return null;
+    };
+    Game.prototype.calculateHoveredTile = function () {
+        this.world.selectedTile = this.getTileAtPos(this.mousePos.x, this.mousePos.y - 16);
     };
     Game.prototype.getKey = function (key) {
         return this.keys[key] || false;

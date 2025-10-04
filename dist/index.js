@@ -14,5 +14,6 @@ window.addEventListener("load", function () {
     window.addEventListener("resize", function () {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        ctx.imageSmoothingEnabled = false;
     });
 });

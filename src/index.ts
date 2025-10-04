@@ -1,4 +1,4 @@
-let game;
+let game: Game;
 
 window.addEventListener("load", () => {
 	const canvas = document.querySelector("canvas");
@@ -40,6 +40,7 @@ window.addEventListener("load", () => {
 		() => {
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
+			ctx.imageSmoothingEnabled = false;
 		}
 	);
 });

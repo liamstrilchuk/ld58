@@ -40,14 +40,18 @@ var Player = /** @class */ (function (_super) {
         ];
         angles.reverse();
         var dir = (_a = angles.find(function (val) { return val.active; })) === null || _a === void 0 ? void 0 : _a.angle;
+        var overTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
+        var speed = (overTile === null || overTile === void 0 ? void 0 : overTile.type) === "water" ? this.speed / 2 : this.speed;
         if (typeof dir !== "undefined") {
-            this.x += Math.cos(dir) * this.speed * delta;
-            this.y += Math.sin(dir) * this.speed * delta;
+            this.x += Math.cos(dir) * speed * delta;
+            this.y += Math.sin(dir) * speed * delta;
         }
     };
     Player.prototype.render = function (game, ctx) {
         ctx.fillStyle = "black";
         ctx.fillRect(game.renderX(this.x) - 15, game.renderY(this.y) - 25, 30, 50);
+    };
+    Player.prototype.getPlayerTile = function () {
     };
     return Player;
 }(Entity));
