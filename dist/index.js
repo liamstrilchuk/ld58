@@ -4,6 +4,7 @@ window.addEventListener("load", function () {
     var ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    ctx.imageSmoothingEnabled = false;
     game = new Game(ctx);
     game.start();
     window.addEventListener("keydown", function (event) { return game.onKeyDown(event.key.toLowerCase()); });

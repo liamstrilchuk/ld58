@@ -6,6 +6,7 @@ window.addEventListener("load", () => {
 
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
+	ctx.imageSmoothingEnabled = false;
 
 	game = new Game(ctx);
 	game.start();

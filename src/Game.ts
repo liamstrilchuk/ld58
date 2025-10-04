@@ -7,6 +7,7 @@ class Game {
 	private lastFrameTime: number = new Date().getTime();
 	private graphics = new GraphicsLoader();
 	private world = new World(this);
+	public buttons: InterfaceButton[] = [];
 
 	public TILE_WIDTH = 31;
 	public TILE_HEIGHT = 15;
@@ -14,7 +15,6 @@ class Game {
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
-		ctx.imageSmoothingEnabled = false;
 	}
 
 	public start() {
@@ -44,6 +44,8 @@ class Game {
 
 		this.world.render(this, this.ctx);
 		this.player.render(this, this.ctx);
+
+		this.buttons.forEach(button => button.render(this, this.ctx));
 	}
 
 	public renderX(x: number): number {
@@ -71,9 +73,14 @@ class Game {
 	}
 
 	private calculateHoveredTile() {
-		this.world.selectedTile = this.getTileAtPos(
+		if (this.findHoveredButton()) {
+			this.world.hoveredTile = null;
+			return;
+		}
+
+		this.world.hoveredTile = this.getTileAtPos(
 			this.mousePos.x,
-			this.mousePos.y - 16
+			this.mousePos.y - 8
 		);
 	}
 
@@ -89,8 +96,25 @@ class Game {
 		this.keys[key] = false;
 	}
 
+	private findHoveredButton(): InterfaceButton | null {
+		for (const button of this.buttons) {
+			if (Math.hypot(button.x - this.mousePos.x, button.y - this.mousePos.y) < 30) {
+				return button;
+			}
+		}
+
+		return null;
+	}
+
 	public onMouseDown() {
 		this.mouseDown = true;
+
+		const button = this.findHoveredButton();
+		if (button) {
+			return;
+		}
+
+		this.world.selectedTile = this.world.hoveredTile;
 	}
 
 	public onMouseUp() {

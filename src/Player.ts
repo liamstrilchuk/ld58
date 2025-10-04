@@ -18,10 +18,10 @@ class Player extends Entity {
 			{ active: keys.down, angle: Math.PI / 2 },
 			{ active: keys.right, angle: 0 },
 			{ active: keys.up, angle: Math.PI * 3 / 2 },
-			{ active: keys.left && keys.down, angle: Math.PI * 0.75 },
-			{ active: keys.left && keys.up, angle: Math.PI * 1.25 },
-			{ active: keys.right && keys.down, angle: Math.PI * 0.25 },
-			{ active: keys.right && keys.up, angle: Math.PI * 1.75 }
+			{ active: keys.left && keys.down, angle: Math.PI * 6 / 7 },
+			{ active: keys.left && keys.up, angle: Math.PI * 7 / 6 },
+			{ active: keys.right && keys.down, angle: Math.PI / 6 },
+			{ active: keys.right && keys.up, angle: Math.PI * (2 - 1 / 6) }
 		];
 
 		angles.reverse();
@@ -30,9 +30,19 @@ class Player extends Entity {
 		const overTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
 		const speed = overTile?.type === "water" ? this.speed / 2 : this.speed;
 
-		if (typeof dir !== "undefined") {
-			this.x += Math.cos(dir) * speed * delta;
-			this.y += Math.sin(dir) * speed * delta;
+		if (typeof dir === "undefined") {
+			return;
+		}
+
+		let newX = Math.cos(dir) * speed * delta;
+		let newY = Math.sin(dir) * speed * delta;
+
+		if (game.getTileAtPos(game.ctx.canvas.width / 2 + newX, game.ctx.canvas.height / 2)) {
+			this.x += newX;
+		}
+
+		if (game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + newY)) {
+			this.y += newY;
 		}
 	}
 

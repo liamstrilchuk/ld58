@@ -7,11 +7,11 @@ var Game = /** @class */ (function () {
         this.lastFrameTime = new Date().getTime();
         this.graphics = new GraphicsLoader();
         this.world = new World(this);
+        this.buttons = [];
         this.TILE_WIDTH = 31;
         this.TILE_HEIGHT = 15;
         this.TILE_SCALE = 6;
         this.ctx = ctx;
-        ctx.imageSmoothingEnabled = false;
     }
     Game.prototype.start = function () {
         this.update();
@@ -29,10 +29,12 @@ var Game = /** @class */ (function () {
         window.requestAnimationFrame(this.update.bind(this));
     };
     Game.prototype.render = function () {
+        var _this = this;
         this.ctx.fillStyle = "#8db3c5";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.world.render(this, this.ctx);
         this.player.render(this, this.ctx);
+        this.buttons.forEach(function (button) { return button.render(_this, _this.ctx); });
     };
     Game.prototype.renderX = function (x) {
         return x + this.ctx.canvas.width / 2 - this.player.x;
@@ -53,7 +55,11 @@ var Game = /** @class */ (function () {
         return null;
     };
     Game.prototype.calculateHoveredTile = function () {
-        this.world.selectedTile = this.getTileAtPos(this.mousePos.x, this.mousePos.y - 16);
+        if (this.findHoveredButton()) {
+            this.world.hoveredTile = null;
+            return;
+        }
+        this.world.hoveredTile = this.getTileAtPos(this.mousePos.x, this.mousePos.y - 8);
     };
     Game.prototype.getKey = function (key) {
         return this.keys[key] || false;
@@ -64,8 +70,22 @@ var Game = /** @class */ (function () {
     Game.prototype.onKeyUp = function (key) {
         this.keys[key] = false;
     };
+    Game.prototype.findHoveredButton = function () {
+        for (var _i = 0, _a = this.buttons; _i < _a.length; _i++) {
+            var button = _a[_i];
+            if (Math.hypot(button.x - this.mousePos.x, button.y - this.mousePos.y) < 30) {
+                return button;
+            }
+        }
+        return null;
+    };
     Game.prototype.onMouseDown = function () {
         this.mouseDown = true;
+        var button = this.findHoveredButton();
+        if (button) {
+            return;
+        }
+        this.world.selectedTile = this.world.hoveredTile;
     };
     Game.prototype.onMouseUp = function () {
         this.mouseDown = false;
