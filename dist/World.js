@@ -19,6 +19,11 @@ var World = /** @class */ (function () {
         this.structures.forEach(function (struct) { return struct.render(game, ctx); });
         if (this.selectedTile) {
             this.selectedTile.createButtons(game);
+            game.buttons.forEach(function (button) { return button.hovered = false; });
+            var button = game.findHoveredButton();
+            if (button) {
+                button.hovered = true;
+            }
         }
         else {
             game.buttons = [];

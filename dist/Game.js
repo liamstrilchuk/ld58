@@ -16,12 +16,16 @@ var Game = /** @class */ (function () {
         this.world = new World(this);
         this.hoeUnlocked = false;
         this.bookUnlocked = true;
+        this.currentQuest = 0;
+        this.questSelected = true;
         this.ctx = ctx;
     }
     Game.prototype.addEntity = function (entity) {
         this.entities.push(entity);
     };
     Game.prototype.start = function () {
+        var _this = this;
+        quests.forEach(function (quest) { return quest.getLines(_this.ctx); });
         this.update();
     };
     Game.prototype.asset = function (name) {
@@ -65,13 +69,18 @@ var Game = /** @class */ (function () {
         for (var item in this.player.inventory) {
             if (this.player.inventory[item] > 0) {
                 this.ctx.drawImage(this.asset("inventory_item"), index * 85 + 5, this.ctx.canvas.height - 85, 80, 80);
-                this.ctx.drawImage(this.asset((_a = Item.itemData[item]) === null || _a === void 0 ? void 0 : _a.asset), index * 85 + 13, this.ctx.canvas.height - 70, 60, 60);
-                this.ctx.fillStyle = "black";
+                this.ctx.drawImage(this.asset((_a = Item.itemData[item]) === null || _a === void 0 ? void 0 : _a.asset), index * 85 + 18, this.ctx.canvas.height - 75, 60, 60);
+                this.ctx.fillStyle = "white";
                 this.ctx.textAlign = "left";
-                this.ctx.font = "bold 25px Garamond";
+                this.ctx.font = "bold 28px Garamond";
                 this.ctx.fillText(this.player.inventory[item].toString(), index * 85 + 19, this.ctx.canvas.height - 22);
+                this.ctx.strokeStyle = "black";
+                this.ctx.strokeText(this.player.inventory[item].toString(), index * 85 + 19, this.ctx.canvas.height - 22);
                 index++;
             }
+        }
+        if (this.questSelected) {
+            quests[this.currentQuest].render(this, this.ctx);
         }
     };
     Game.prototype.renderX = function (x) {
@@ -103,6 +112,9 @@ var Game = /** @class */ (function () {
         return this.keys[key] || false;
     };
     Game.prototype.onKeyDown = function (key) {
+        if (key === "q") {
+            this.questSelected = !this.questSelected;
+        }
         this.keys[key] = true;
     };
     Game.prototype.onKeyUp = function (key) {

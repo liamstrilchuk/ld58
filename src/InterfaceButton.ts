@@ -2,6 +2,7 @@ class InterfaceButton {
 	public x: number;
 	public y: number;
 	public action: string;
+	public hovered: boolean = false;
 
 	constructor(x: number, y: number, action: string) {
 		this.x = x;
@@ -11,8 +12,10 @@ class InterfaceButton {
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
 		ctx.fillStyle = "white";
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, 30, 0, Math.PI * 2);
-		ctx.fill();
+		if (this.hovered) {
+			ctx.drawImage(game.asset("action_harvest"), this.x - 35, this.y - 35, 70, 70);
+		} else {
+			ctx.drawImage(game.asset("action_harvest"), this.x - 30, this.y - 30, 60, 60);
+		}
 	}
 }

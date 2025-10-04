@@ -23,6 +23,12 @@ class World {
 
 		if (this.selectedTile) {
 			this.selectedTile.createButtons(game);
+
+			game.buttons.forEach(button => button.hovered = false);
+			const button = game.findHoveredButton();
+			if (button) {
+				button.hovered = true;
+			}
 		} else {
 			game.buttons = [];
 		}

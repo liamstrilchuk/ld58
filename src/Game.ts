@@ -19,6 +19,8 @@ class Game {
 
 	public hoeUnlocked = false;
 	public bookUnlocked = true;
+	public currentQuest = 0;
+	public questSelected = true;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
@@ -29,6 +31,7 @@ class Game {
 	}
 
 	public start() {
+		quests.forEach(quest => quest.getLines(this.ctx));
 		this.update();
 	}
 
@@ -85,19 +88,29 @@ class Game {
 				);
 				this.ctx.drawImage(
 					this.asset(Item.itemData[item]?.asset),
-					index * 85 + 13, this.ctx.canvas.height - 70,
+					index * 85 + 18, this.ctx.canvas.height - 75,
 					60, 60
 				);
-				this.ctx.fillStyle = "black";
+				this.ctx.fillStyle = "white";
 				this.ctx.textAlign = "left";
-				this.ctx.font = "bold 25px Garamond";
+				this.ctx.font = "bold 28px Garamond";
 				this.ctx.fillText(
+					this.player.inventory[item].toString(),
+					index * 85 + 19,
+					this.ctx.canvas.height - 22
+				);
+				this.ctx.strokeStyle = "black";
+				this.ctx.strokeText(
 					this.player.inventory[item].toString(),
 					index * 85 + 19,
 					this.ctx.canvas.height - 22
 				);
 				index++;
 			}
+		}
+
+		if (this.questSelected) {
+			quests[this.currentQuest].render(this, this.ctx);
 		}
 	}
 
@@ -142,6 +155,9 @@ class Game {
 	}
 
 	public onKeyDown(key: string) {
+		if (key === "q") {
+			this.questSelected = !this.questSelected;
+		}
 		this.keys[key] = true;
 	}
 
@@ -149,7 +165,7 @@ class Game {
 		this.keys[key] = false;
 	}
 
-	private findHoveredButton(): InterfaceButton | null {
+	public findHoveredButton(): InterfaceButton | null {
 		for (const button of this.buttons) {
 			if (Math.hypot(button.x - this.mousePos.x, button.y - this.mousePos.y) < 30) {
 				return button;

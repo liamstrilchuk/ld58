@@ -18,8 +18,12 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["water_flower"] = this.loadImage("assets/water_flower.png");
         this.assets["house"] = this.loadImage("assets/house.png");
         this.assets["water_flower_icon"] = this.loadImage("assets/water_flower_icon.png");
+        this.assets["white_flower_icon"] = this.loadImage("assets/white_flower_icon.png");
         this.assets["red_flower_icon"] = this.loadImage("assets/red_flower_icon.png");
         this.assets["inventory_item"] = this.loadImage("assets/inventory_item.png");
+        this.assets["action_box"] = this.loadImage("assets/action_box.png");
+        this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
+        this.assets["action_till"] = this.loadImage("assets/action_till.png");
     };
     GraphicsLoader.prototype.loadImage = function (src) {
         var image = new Image();

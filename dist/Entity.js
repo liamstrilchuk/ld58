@@ -45,7 +45,7 @@ var Item = /** @class */ (function (_super) {
     };
     Item.itemData = {
         "flower": {
-            "asset": "red_flower_icon",
+            "asset": "white_flower_icon",
             "name": "Daisy"
         },
         "red_flower": {

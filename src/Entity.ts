@@ -14,7 +14,7 @@ abstract class Entity {
 class Item extends Entity {
 	public static itemData = {
 		"flower": {
-			"asset": "red_flower_icon",
+			"asset": "white_flower_icon",
 			"name": "Daisy"
 		},
 		"red_flower": {
