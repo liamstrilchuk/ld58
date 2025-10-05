@@ -1,15 +1,18 @@
 class Action {
 	private static actionTimes: { [key: string]: number } = {
 		harvest: 30,
-		till: 60
+		till: 60,
+		plant: 20
 	};
 	private tile: Tile;
 	private action: string;
 	private progress = 0;
+	private params: { [key: string]: string };
 
-	constructor(tile: Tile, action: string) {
+	constructor(tile: Tile, action: string, params?: { [key: string]: string }) {
 		this.tile = tile;
 		this.action = action;
+		this.params = params;
 	}
 
 	public update(game: Game, delta: number): boolean {
@@ -44,26 +47,62 @@ class Action {
 		);
 	}
 
+	private harvest(game: Game, items: string[], changeTo: string) {
+		let speed = 1;
+
+		for (const item of items) {
+			this.addItem(game, item, speed);
+			speed *= 0.9;
+		}
+
+		this.tile.changeType(game, changeTo);
+	}
+
 	private onCompletion(game: Game) {
-		if (this.tile.type === "flower" && this.action === "harvest") {
-			this.addItem(game, "flower");
-			this.addItem(game, "white_flower_seeds", 0.9);
-			this.tile.changeType(game, "grass");
-		}
+		if (this.action === "harvest") {
+			switch (this.tile.type) {
+				case "flower":
+					this.harvest(game, [ "flower", "white_flower_seeds" ], "grass");
+					break;
+				case "water_flower":
+					this.harvest(game, [ "water_flower" ], "water");
+					break;
+				case "red_flower":
+					this.harvest(game, [ "red_flower", "red_flower_seeds" ], "grass");
+					break;
+				case "red_flower_tilled":
+					this.harvest(game, [ "red_flower", "red_flower_seeds" ], "tilled");
+					break;
+				case "white_flower_tilled":
+					this.harvest(game, [ "flower", "white_flower_seeds" ], "tilled");
+					break;
+			}
 
-		if (this.tile.type === "water_flower" && this.action === "harvest") {
-			this.addItem(game, "water_flower");
-			this.tile.changeType(game, "water");
-		}
-
-		if (this.tile.type === "red_flower" && this.action === "harvest") {
-			this.addItem(game, "red_flower");
-			this.addItem(game, "red_flower_seeds", 0.9);
-			this.tile.changeType(game, "grass");
+			this.tile.stage = 0;
 		}
 
 		if (["flower", "grass", "red_flower", "sand"].includes(this.tile.type) && this.action === "till") {
 			this.tile.changeType(game, "tilled");
+		}
+
+		if (this.action === "plant") {
+			switch (this.params["item"]) {
+				case "white_flower_seeds":
+					this.tile.changeType(game, "white_flower_tilled");
+					break;
+				case "red_flower_seeds":
+					this.tile.changeType(game, "red_flower_tilled");
+					break;
+				case "purple_flower_seeds":
+					this.tile.changeType(game, "purple_flower_tilled");
+					break;
+				case "yellow_flower_seeds":
+					this.tile.changeType(game, "yellow_flower_tilled");
+					break;
+				case "berries_flower_seeds":
+					this.tile.changeType(game, "berries_flower_tilled");
+					break;
+			}
 		}
 	}
 }

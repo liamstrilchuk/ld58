@@ -20,6 +20,9 @@ var Game = /** @class */ (function () {
         this.currentQuest = 0;
         this.questSelected = false;
         this.encyclopediaSelected = false;
+        this.selectingSeeds = false;
+        this.infoText = "";
+        this.inventoryButtons = [];
         this.ctx = ctx;
     }
     Game.prototype.addEntity = function (entity) {
@@ -40,6 +43,7 @@ var Game = /** @class */ (function () {
         var delta = (currentTime - this.lastFrameTime) / (1000 / 60);
         this.lastFrameTime = currentTime;
         this.player.update(this, delta);
+        this.world.update(this, delta);
         for (var i = this.entities.length - 1; i > -1; i--) {
             if (this.entities[i].update(this, delta)) {
                 this.entities.splice(i, 1);
@@ -55,6 +59,7 @@ var Game = /** @class */ (function () {
     Game.prototype.render = function () {
         var _this = this;
         var _a;
+        this.infoText = "";
         this.ctx.fillStyle = "#8db3c5";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.world.render(this, this.ctx);
@@ -68,6 +73,7 @@ var Game = /** @class */ (function () {
     Game.prototype.renderInterface = function () {
         var _a;
         var index = 0;
+        this.inventoryButtons = [];
         for (var item in this.player.inventory) {
             if (this.player.inventory[item] > 0) {
                 if (this.mousePos.x >= index * 85 + 5 && this.mousePos.x <= index * 85 + 85 &&
@@ -78,6 +84,11 @@ var Game = /** @class */ (function () {
                     this.ctx.fillStyle = "white";
                     this.ctx.fillText(Item.itemData[item].name, index * 85 + 20, this.ctx.canvas.height - 105);
                 }
+                this.inventoryButtons.push({
+                    x: index * 85 + 5, y: this.ctx.canvas.height - 85,
+                    w: 80, h: 80,
+                    item: item
+                });
                 this.ctx.drawImage(this.asset("inventory_item"), index * 85 + 5, this.ctx.canvas.height - 85, 80, 80);
                 this.ctx.drawImage(this.asset((_a = Item.itemData[item]) === null || _a === void 0 ? void 0 : _a.asset), index * 85 + 18, this.ctx.canvas.height - 75, 60, 60);
                 this.ctx.fillStyle = "white";
@@ -89,12 +100,27 @@ var Game = /** @class */ (function () {
                 index++;
             }
         }
+        if (this.selectingSeeds) {
+            this.infoText = "Select seeds from your inventory";
+        }
         if (this.questSelected && this.currentQuest < quests.length) {
             quests[this.currentQuest].render(this, this.ctx);
         }
         if (this.encyclopediaSelected) {
             this.encyclopedia.render(this, this.ctx);
         }
+        if (this.infoText) {
+            this.drawInfoText(this.infoText);
+        }
+    };
+    Game.prototype.drawInfoText = function (text) {
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "bold 30px Courier New";
+        this.ctx.textAlign = "center";
+        this.ctx.fillText(text, game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + 100);
+        this.ctx.strokeStyle = "black";
+        this.ctx.strokeText(text, game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + 100);
+        this.ctx.textAlign = "left";
     };
     Game.prototype.renderX = function (x) {
         return x + this.ctx.canvas.width / 2 - this.player.x;
@@ -171,17 +197,43 @@ var Game = /** @class */ (function () {
             quests[this.currentQuest].onMouseDown(this, this.mousePos.x, this.mousePos.y);
             return;
         }
+        for (var _i = 0, _a = this.inventoryButtons; _i < _a.length; _i++) {
+            var ib = _a[_i];
+            if (this.mousePos.x >= ib.x && this.mousePos.x < ib.x + ib.w &&
+                this.mousePos.y >= ib.y && this.mousePos.y < ib.y + ib.h) {
+                if (this.selectingSeeds && Item.itemData[ib.item]["can_plant"]) {
+                    this.player.inventory[ib.item]--;
+                    this.currentAction = new Action(this.world.selectedTile, "plant", {
+                        item: ib.item
+                    });
+                    this.selectingSeeds = false;
+                    this.world.selectedTile = null;
+                }
+                return;
+            }
+        }
         var button = this.findHoveredButton();
         if (button) {
             if (this.currentAction || !this.world.selectedTile) {
                 return;
             }
-            this.currentAction = new Action(this.world.selectedTile, button.action);
-            this.world.selectedTile = null;
+            if (button.action !== "plant") {
+                this.currentAction = new Action(this.world.selectedTile, button.action);
+                this.world.selectedTile = null;
+            }
+            else {
+                this.selectingSeeds = true;
+            }
             return;
         }
         if (this.world.hoveredTile && !this.structureAtTile(this.world.hoveredTile)) {
-            this.world.selectedTile = this.world.hoveredTile;
+            if (this.world.selectedTile === this.world.hoveredTile) {
+                this.world.selectedTile = null;
+            }
+            else {
+                this.world.selectedTile = this.world.hoveredTile;
+            }
+            this.selectingSeeds = false;
         }
     };
     Game.prototype.onMouseUp = function () {

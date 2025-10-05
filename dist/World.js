@@ -15,6 +15,13 @@ var World = /** @class */ (function () {
             }
         }
     };
+    World.prototype.update = function (game, delta) {
+        for (var x = 0; x < this.WORLD_SIZE; x++) {
+            for (var y = 0; y < this.WORLD_SIZE; y++) {
+                this.grid[x][y].update(game, delta);
+            }
+        }
+    };
     World.prototype.renderAfter = function (game, ctx) {
         this.structures.forEach(function (struct) { return struct.render(game, ctx); });
         if (this.selectedTile) {

@@ -29,12 +29,18 @@ class GraphicsLoader {
 		this.assets["house2"] = this.loadImage("assets/house2.png");
 		this.assets["house3"] = this.loadImage("assets/house3.png");
 
-		this.assets["water_flower_icon"] = this.loadImage("assets/water_flower_icon.png");
-		this.assets["white_flower_icon"] = this.loadImage("assets/white_flower_icon.png");
-		this.assets["red_flower_icon"] = this.loadImage("assets/red_flower_icon.png");
+		this.assets["water_flower_icon"] = this.loadImage("assets/flowers/water_flower_icon.png");
+		this.assets["white_flower_icon"] = this.loadImage("assets/flowers/white_flower_icon.png");
+		this.assets["red_flower_icon"] = this.loadImage("assets/flowers/red_flower_icon.png");
+		this.assets["yellow_flower_icon"] = this.loadImage("assets/flowers/yellow_flower_icon.png");
+		this.assets["purple_flower_icon"] = this.loadImage("assets/flowers/purple_flower_icon.png");
+		this.assets["berries_icon"] = this.loadImage("assets/flowers/berries_icon.png");
 
-		this.assets["white_flower_seeds"] = this.loadImage("assets/white_flower_seeds.png");
-		this.assets["red_flower_seeds"] = this.loadImage("assets/red_flower_seeds.png");
+		this.assets["white_flower_seeds"] = this.loadImage("assets/seeds/white_flower_seeds.png");
+		this.assets["red_flower_seeds"] = this.loadImage("assets/seeds/red_flower_seeds.png");
+		this.assets["purple_seeds"] = this.loadImage("assets/seeds/purple_seeds.png");
+		this.assets["yellow_seeds"] = this.loadImage("assets/seeds/yellow_seeds.png");
+		this.assets["berries_seeds"] = this.loadImage("assets/seeds/berries_seeds.png");
 
 		this.assets["inventory_item"] = this.loadImage("assets/inventory_item.png");
 		this.assets["action_box"] = this.loadImage("assets/action_box.png");
@@ -48,6 +54,14 @@ class GraphicsLoader {
 				this.player[this.player.length - 1].push(
 					this.loadImage(`assets/player_anim/D${d}-F${f}.png`)
 				);
+			}
+		}
+		
+		const planted = ["purple", "red", "berries", "white", "yellow"];
+
+		for (const plant of planted) {
+			for (let i = 0; i < 3; i++) {
+				this.assets[`${plant}-stage${i}`] = this.loadImage(`assets/planted/${plant}-stage${i}.png`);
 			}
 		}
 	}

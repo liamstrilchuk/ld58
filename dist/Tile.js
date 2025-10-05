@@ -44,9 +44,33 @@ var Tile = /** @class */ (function () {
                     ? game.asset("grass_tile")
                     : game.asset("grass_tile2");
                 break;
+            case "white_flower_tilled":
+                this.image = game.asset("white-stage".concat(this.stage));
+                break;
+            case "red_flower_tilled":
+                this.image = game.asset("red-stage".concat(this.stage));
+                break;
+            case "purple_flower_tilled":
+                this.image = game.asset("purple-stage".concat(this.stage));
+                break;
+            case "yellow_flower_tilled":
+                this.image = game.asset("yellow-stage".concat(this.stage));
+                break;
+            case "berries_flower_tilled":
+                this.image = game.asset("berries-stage".concat(this.stage));
+                break;
             default:
                 this.image = game.asset("blank_tile");
                 break;
+        }
+    };
+    Tile.prototype.update = function (game, delta) {
+        if (!Tile.growingChances[this.type]) {
+            return;
+        }
+        if (Math.random() < Tile.growingChances[this.type] * delta) {
+            this.stage = Math.min(this.stage + 1, 2);
+            this.determineImage(game);
         }
     };
     Tile.prototype.render = function (game, ctx, isSelected, isHovered, structures) {
@@ -99,7 +123,7 @@ var Tile = /** @class */ (function () {
         };
     };
     Tile.prototype.createButtons = function (game) {
-        var options = Tile.getOptionsByType(game, this.type);
+        var options = Tile.getOptionsByType(game, this.type, this.stage);
         var renderPos = Tile.renderPos(game, this.x, this.y);
         var Tw = game.TILE_WIDTH * game.TILE_SCALE;
         switch (options.length) {
@@ -126,7 +150,8 @@ var Tile = /** @class */ (function () {
                 break;
         }
     };
-    Tile.getOptionsByType = function (game, type) {
+    Tile.getOptionsByType = function (game, type, stage) {
+        if (stage === void 0) { stage = 0; }
         var options = [];
         switch (type) {
             case "grass":
@@ -140,10 +165,19 @@ var Tile = /** @class */ (function () {
                 options.push("harvest");
                 break;
             case "red_flower":
-                options.push("harvest", "till");
+                options.push("till", "harvest");
                 break;
             case "tilled":
                 options.push("plant");
+                break;
+            case "red_flower_tilled":
+            case "white_flower_tilled":
+            case "purple_flower_tilled":
+            case "yellow_flower_tilled":
+            case "berries_flower_tilled":
+                if (stage >= 2) {
+                    options.push("harvest");
+                }
                 break;
         }
         return options.filter(function (opt) {
@@ -154,6 +188,12 @@ var Tile = /** @class */ (function () {
         });
     };
     Tile.recessedTypes = ["water", "water_flower"];
-    Tile.plantTypes = ["plant_white_flower", "plant_red_flower"];
+    Tile.growingChances = {
+        "white_flower_tilled": 1 / 300,
+        "red_flower_tilled": 1 / 600,
+        "purple_flower_tilled": 1 / 2000,
+        "yellow_flower_tilled": 1 / 1000,
+        "berries_flower_tilled": 1 / 1000
+    };
     return Tile;
 }());

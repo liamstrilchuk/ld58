@@ -20,11 +20,17 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["house"] = this.loadImage("assets/house.png");
         this.assets["house2"] = this.loadImage("assets/house2.png");
         this.assets["house3"] = this.loadImage("assets/house3.png");
-        this.assets["water_flower_icon"] = this.loadImage("assets/water_flower_icon.png");
-        this.assets["white_flower_icon"] = this.loadImage("assets/white_flower_icon.png");
-        this.assets["red_flower_icon"] = this.loadImage("assets/red_flower_icon.png");
-        this.assets["white_flower_seeds"] = this.loadImage("assets/white_flower_seeds.png");
-        this.assets["red_flower_seeds"] = this.loadImage("assets/red_flower_seeds.png");
+        this.assets["water_flower_icon"] = this.loadImage("assets/flowers/water_flower_icon.png");
+        this.assets["white_flower_icon"] = this.loadImage("assets/flowers/white_flower_icon.png");
+        this.assets["red_flower_icon"] = this.loadImage("assets/flowers/red_flower_icon.png");
+        this.assets["yellow_flower_icon"] = this.loadImage("assets/flowers/yellow_flower_icon.png");
+        this.assets["purple_flower_icon"] = this.loadImage("assets/flowers/purple_flower_icon.png");
+        this.assets["berries_icon"] = this.loadImage("assets/flowers/berries_icon.png");
+        this.assets["white_flower_seeds"] = this.loadImage("assets/seeds/white_flower_seeds.png");
+        this.assets["red_flower_seeds"] = this.loadImage("assets/seeds/red_flower_seeds.png");
+        this.assets["purple_seeds"] = this.loadImage("assets/seeds/purple_seeds.png");
+        this.assets["yellow_seeds"] = this.loadImage("assets/seeds/yellow_seeds.png");
+        this.assets["berries_seeds"] = this.loadImage("assets/seeds/berries_seeds.png");
         this.assets["inventory_item"] = this.loadImage("assets/inventory_item.png");
         this.assets["action_box"] = this.loadImage("assets/action_box.png");
         this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
@@ -33,6 +39,13 @@ var GraphicsLoader = /** @class */ (function () {
             this.player.push([]);
             for (var f = 0; f < 4; f++) {
                 this.player[this.player.length - 1].push(this.loadImage("assets/player_anim/D".concat(d, "-F").concat(f, ".png")));
+            }
+        }
+        var planted = ["purple", "red", "berries", "white", "yellow"];
+        for (var _i = 0, planted_1 = planted; _i < planted_1.length; _i++) {
+            var plant = planted_1[_i];
+            for (var i = 0; i < 3; i++) {
+                this.assets["".concat(plant, "-stage").concat(i)] = this.loadImage("assets/planted/".concat(plant, "-stage").concat(i, ".png"));
             }
         }
     };

@@ -47,23 +47,58 @@ var Item = /** @class */ (function (_super) {
     Item.itemData = {
         "flower": {
             "asset": "white_flower_icon",
-            "name": "Sunpetal"
+            "name": "Sunpetal",
+            "can_plant": false
         },
         "red_flower": {
             "asset": "red_flower_icon",
-            "name": "Emberbloom"
+            "name": "Emberbloom",
+            "can_plant": false
         },
         "water_flower": {
             "asset": "water_flower_icon",
-            "name": "Tidebloom"
+            "name": "Tidebloom",
+            "can_plant": false
         },
         "white_flower_seeds": {
             "asset": "white_flower_seeds",
-            "name": "Sunpetal Seeds"
+            "name": "Sunpetal Seeds",
+            "can_plant": true
         },
         "red_flower_seeds": {
             "asset": "red_flower_seeds",
-            "name": "Emberbloom Seeds"
+            "name": "Emberbloom Seeds",
+            "can_plant": true
+        },
+        "purple_flower_seeds": {
+            "asset": "purple_seeds",
+            "name": "Dreamveil Seeds",
+            "can_plant": true
+        },
+        "purple_flower": {
+            "asset": "purple_flower_icon",
+            "name": "Dreamveil",
+            "can_plant": false
+        },
+        "yellow_seeds": {
+            "asset": "yellow_seeds",
+            "name": "Sunspire Seeds",
+            "can_plant": true
+        },
+        "yellow_flower": {
+            "asset": "yellow_flower_icon",
+            "name": "Sunspire",
+            "can_plant": false
+        },
+        "berries_flower_seeds": {
+            "asset": "berries_seeds",
+            "name": "Emberfruit Seeds",
+            "can_plant": true
+        },
+        "berries_flower": {
+            "asset": "berries_icon",
+            "name": "Emberfruit",
+            "can_plant": false
         }
     };
     return Item;

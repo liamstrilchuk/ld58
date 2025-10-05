@@ -6,7 +6,14 @@ class Tile {
 	public stage: number = 0;
 
 	private static recessedTypes = ["water", "water_flower"];
-	private static plantTypes = ["plant_white_flower", "plant_red_flower"];
+
+	private static growingChances = {
+		"white_flower_tilled": 1/300,
+		"red_flower_tilled": 1/600,
+		"purple_flower_tilled": 1/2000,
+		"yellow_flower_tilled": 1/1000,
+		"berries_flower_tilled": 1/1000
+	};
 
 	constructor(game: Game, x: number, y: number, type: string) {
 		this.x = x;
@@ -55,9 +62,35 @@ class Tile {
 					? game.asset("grass_tile")
 					: game.asset("grass_tile2");
 				break;
+			case "white_flower_tilled":
+				this.image = game.asset(`white-stage${this.stage}`);
+				break;
+			case "red_flower_tilled":
+				this.image = game.asset(`red-stage${this.stage}`);
+				break;
+			case "purple_flower_tilled":
+				this.image = game.asset(`purple-stage${this.stage}`);
+				break;
+			case "yellow_flower_tilled":
+				this.image = game.asset(`yellow-stage${this.stage}`);
+				break;
+			case "berries_flower_tilled":
+				this.image = game.asset(`berries-stage${this.stage}`);
+				break;
 			default:
 				this.image = game.asset("blank_tile");
 				break;
+		}
+	}
+
+	public update(game: Game, delta: number) {
+		if (!Tile.growingChances[this.type]) {
+			return;
+		}
+
+		if (Math.random() < Tile.growingChances[this.type] * delta) {
+			this.stage = Math.min(this.stage + 1, 2);
+			this.determineImage(game);
 		}
 	}
 
@@ -128,7 +161,7 @@ class Tile {
 	}
 
 	public createButtons(game: Game) {
-		const options = Tile.getOptionsByType(game, this.type);
+		const options = Tile.getOptionsByType(game, this.type, this.stage);
 		const renderPos = Tile.renderPos(game, this.x, this.y);
 		const Tw = game.TILE_WIDTH * game.TILE_SCALE;
 
@@ -157,7 +190,7 @@ class Tile {
 		}
 	}
 
-	static getOptionsByType(game: Game, type: string): string[] {
+	static getOptionsByType(game: Game, type: string, stage=0): string[] {
 		const options: string[] = [];
 
 		switch (type) {
@@ -172,10 +205,19 @@ class Tile {
 				options.push("harvest");
 				break;
 			case "red_flower":
-				options.push("harvest", "till");
+				options.push("till", "harvest");
 				break;
 			case "tilled":
 				options.push("plant");
+				break;
+			case "red_flower_tilled":
+			case "white_flower_tilled":
+			case "purple_flower_tilled":
+			case "yellow_flower_tilled":
+			case "berries_flower_tilled":
+				if (stage >= 2) {
+					options.push("harvest");
+				}
 				break;
 		}
 

@@ -18,6 +18,14 @@ class World {
 		}
 	}
 
+	public update(game: Game, delta: number) {
+		for (let x = 0; x < this.WORLD_SIZE; x++) {
+			for (let y = 0; y < this.WORLD_SIZE; y++) {
+				this.grid[x][y].update(game, delta);
+			}
+		}
+	}
+
 	public renderAfter(game: Game, ctx: CanvasRenderingContext2D) {
 		this.structures.forEach(struct => struct.render(game, ctx));
 

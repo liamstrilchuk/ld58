@@ -23,6 +23,9 @@ class Game {
 	public currentQuest = 0;
 	public questSelected = false;
 	public encyclopediaSelected = false;
+	public selectingSeeds = false;
+	public infoText: string = "";
+	public inventoryButtons: { x: number, y: number, w: number, h: number, item: string }[] = [];
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
@@ -48,6 +51,7 @@ class Game {
 		this.lastFrameTime = currentTime;
 
 		this.player.update(this, delta);
+		this.world.update(this, delta);
 		
 		for (let i = this.entities.length - 1; i > -1; i--) {
 			if (this.entities[i].update(this, delta)) {
@@ -66,6 +70,7 @@ class Game {
 	}
 
 	private render() {
+		this.infoText = "";
 		this.ctx.fillStyle = "#8db3c5";
 		this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
@@ -81,6 +86,8 @@ class Game {
 
 	private renderInterface() {
 		let index = 0;
+		this.inventoryButtons = [];
+
 		for (const item in this.player.inventory) {
 			if (this.player.inventory[item] > 0) {
 				if (this.mousePos.x >= index * 85 + 5 && this.mousePos.x <= index * 85 + 85 &&
@@ -97,6 +104,10 @@ class Game {
 					this.ctx.fillStyle = "white";
 					this.ctx.fillText(Item.itemData[item].name, index * 85 + 20, this.ctx.canvas.height - 105);
 				}
+				this.inventoryButtons.push({
+					x: index * 85 + 5, y: this.ctx.canvas.height - 85,
+					w: 80, h: 80, item
+				});
 				this.ctx.drawImage(
 					this.asset("inventory_item"),
 					index * 85 + 5, this.ctx.canvas.height - 85,
@@ -125,6 +136,10 @@ class Game {
 			}
 		}
 
+		if (this.selectingSeeds) {
+			this.infoText = "Select seeds from your inventory";
+		}
+
 		if (this.questSelected && this.currentQuest < quests.length) {
 			quests[this.currentQuest].render(this, this.ctx);
 		}
@@ -132,6 +147,20 @@ class Game {
 		if (this.encyclopediaSelected) {
 			this.encyclopedia.render(this, this.ctx);
 		}
+
+		if (this.infoText) {
+			this.drawInfoText(this.infoText);
+		}
+	}
+
+	public drawInfoText(text: string) {
+		this.ctx.fillStyle = "white";
+		this.ctx.font = "bold 30px Courier New";
+		this.ctx.textAlign = "center";
+		this.ctx.fillText(text, game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + 100);
+		this.ctx.strokeStyle = "black";
+		this.ctx.strokeText(text, game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + 100);
+		this.ctx.textAlign = "left";
 	}
 
 	public renderX(x: number): number {
@@ -231,18 +260,42 @@ class Game {
 			return;
 		}
 
+		for (const ib of this.inventoryButtons) {
+			if (this.mousePos.x >= ib.x && this.mousePos.x < ib.x + ib.w &&
+				this.mousePos.y >= ib.y && this.mousePos.y < ib.y + ib.h) {
+				if (this.selectingSeeds && Item.itemData[ib.item]["can_plant"]) {
+					this.player.inventory[ib.item]--;
+					this.currentAction = new Action(this.world.selectedTile, "plant", {
+						item: ib.item
+					});
+					this.selectingSeeds = false;
+					this.world.selectedTile = null;
+				}
+				return;
+			}
+		}
+
 		const button = this.findHoveredButton();
 		if (button) {
 			if (this.currentAction || !this.world.selectedTile) {
 				return;
 			}
-			this.currentAction = new Action(this.world.selectedTile, button.action);
-			this.world.selectedTile = null;
+			if (button.action !== "plant") {
+				this.currentAction = new Action(this.world.selectedTile, button.action);
+				this.world.selectedTile = null;
+			} else {
+				this.selectingSeeds = true;
+			}
 			return;
 		}
 
 		if (this.world.hoveredTile && !this.structureAtTile(this.world.hoveredTile)) {
-			this.world.selectedTile = this.world.hoveredTile;
+			if (this.world.selectedTile === this.world.hoveredTile) {
+				this.world.selectedTile = null;
+			} else {
+				this.world.selectedTile = this.world.hoveredTile;
+			}
+			this.selectingSeeds = false;
 		}
 	}
 
