@@ -224,7 +224,7 @@ const quests = [
 		(_) => {},
 		[
 			{
-				asset: "action_harvest",
+				asset: "encyclopedia_icon",
 				name: "Encyclopedia Unlocked (press E)"
 			},
 			{
@@ -257,7 +257,7 @@ const quests = [
 				name: "3 x Emberfruit Seeds"
 			},
 			{
-				asset: "berries_seeds",
+				asset: "encyclopedia_icon",
 				name: "Encyclopedia Entry Unlocked"
 			}
 		]

@@ -78,6 +78,8 @@ class Action {
 					this.harvest(game, [ "berries_flower_seeds" ], "tilled");
 					break;
 			}
+
+			this.tile.stage = 0;
 		}
 
 		if (this.action === "harvest") {

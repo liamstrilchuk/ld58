@@ -21,7 +21,7 @@ class InterfaceButton {
 					this.asset = game.asset("action_till");
 					break;
 				case "plant":
-					this.asset = game.asset("action_harvest");
+					this.asset = game.asset("action_plant");
 					break;
 				case "remove":
 					this.asset = game.asset("action_x");

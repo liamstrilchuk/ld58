@@ -75,5 +75,16 @@ var World = /** @class */ (function () {
             return "grass";
         }
     };
+    World.prototype.getAdjacentTiles = function (tile) {
+        var positions = [[tile.x - 1, tile.y], [tile.x + 1, tile.y], [tile.x, tile.y - 1], [tile.x, tile.y + 1]];
+        var list = [];
+        for (var _i = 0, positions_1 = positions; _i < positions_1.length; _i++) {
+            var pos = positions_1[_i];
+            if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE) {
+                list.push(this.grid[pos[0]][pos[1]]);
+            }
+        }
+        return list;
+    };
     return World;
 }());

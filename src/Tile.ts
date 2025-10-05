@@ -91,8 +91,36 @@ class Tile {
 		}
 	}
 
+	public canGrow(game: Game): boolean {
+		if (!Tile.plantNames[this.type]) {
+			return false;
+		}
+
+		const adjacent = game.world.getAdjacentTiles(this);
+		const allTiles = adjacent.map(tile => tile.type);
+
+		switch (this.type) {
+			case "white_flower_tilled":
+			case "red_flower_tilled":
+			case "yellow_flower_tilled":
+				return true;
+			case "purple_flower_tilled":
+				return allTiles.includes("water");
+			case "berries_flower_tilled":
+				let hasRedFlower = allTiles.includes("red_flower");
+				for (const item of adjacent) {
+					if (item.type === "red_flower_tilled" && item.canGrow(game)) {
+						hasRedFlower = true;
+					}
+				}
+				return hasRedFlower && allTiles.includes("water");
+		}
+
+		return false;
+	}
+
 	public update(game: Game, delta: number) {
-		if (!Tile.growingChances[this.type]) {
+		if (!Tile.growingChances[this.type] || !this.canGrow(game)) {
 			return;
 		}
 
@@ -150,6 +178,14 @@ class Tile {
 			ctx.lineTo(renderX, renderY + game.TILE_SCALE * game.TILE_HEIGHT / 2 + inset / 2 + inset2);
 			ctx.lineTo(renderX, renderY + game.TILE_SCALE * game.TILE_HEIGHT / 2 + inset / 2 - inset2);
 			ctx.fill();
+		}
+
+		if (Tile.plantNames[this.type] && !this.canGrow(game)) {
+			ctx.drawImage(
+				game.asset("warning"),
+				renderX + game.TILE_WIDTH * game.TILE_SCALE / 2 - 30, renderY - 50,
+				60, 60
+			);
 		}
 	}
 

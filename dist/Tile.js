@@ -64,8 +64,33 @@ var Tile = /** @class */ (function () {
                 break;
         }
     };
+    Tile.prototype.canGrow = function (game) {
+        if (!Tile.plantNames[this.type]) {
+            return false;
+        }
+        var adjacent = game.world.getAdjacentTiles(this);
+        var allTiles = adjacent.map(function (tile) { return tile.type; });
+        switch (this.type) {
+            case "white_flower_tilled":
+            case "red_flower_tilled":
+            case "yellow_flower_tilled":
+                return true;
+            case "purple_flower_tilled":
+                return allTiles.includes("water");
+            case "berries_flower_tilled":
+                var hasRedFlower = allTiles.includes("red_flower");
+                for (var _i = 0, adjacent_1 = adjacent; _i < adjacent_1.length; _i++) {
+                    var item = adjacent_1[_i];
+                    if (item.type === "red_flower_tilled" && item.canGrow(game)) {
+                        hasRedFlower = true;
+                    }
+                }
+                return hasRedFlower && allTiles.includes("water");
+        }
+        return false;
+    };
     Tile.prototype.update = function (game, delta) {
-        if (!Tile.growingChances[this.type]) {
+        if (!Tile.growingChances[this.type] || !this.canGrow(game)) {
             return;
         }
         if (Math.random() < Tile.growingChances[this.type] * delta) {
@@ -110,6 +135,9 @@ var Tile = /** @class */ (function () {
             ctx.lineTo(renderX, renderY + game.TILE_SCALE * game.TILE_HEIGHT / 2 + inset / 2 + inset2);
             ctx.lineTo(renderX, renderY + game.TILE_SCALE * game.TILE_HEIGHT / 2 + inset / 2 - inset2);
             ctx.fill();
+        }
+        if (Tile.plantNames[this.type] && !this.canGrow(game)) {
+            ctx.drawImage(game.asset("warning"), renderX + game.TILE_WIDTH * game.TILE_SCALE / 2 - 30, renderY - 50, 60, 60);
         }
     };
     Tile.prototype.renderSelectedTile = function (game, ctx) {

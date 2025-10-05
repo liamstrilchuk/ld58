@@ -64,7 +64,7 @@ class World {
 		game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT;
 	}
 
-	private determineTileType(x: number, y: number) {
+	private determineTileType(x: number, y: number): string {
 		const val = Math.abs((noise as any).perlin2(x / 30, y / 30));
 		const val2 = Math.abs((noise as any).perlin2(x / 50 + 123, y / 50 + 123));
 		const dist = Math.hypot(x - this.structures[0].x, y - this.structures[0].y);
@@ -90,5 +90,18 @@ class World {
 
 			return "grass";
 		}
+	}
+
+	public getAdjacentTiles(tile: Tile): Tile[] {
+		const positions = [[ tile.x - 1, tile.y ], [ tile.x + 1, tile.y ], [ tile.x, tile.y - 1 ], [ tile.x, tile.y + 1 ]];
+		const list: Tile[] = [];
+
+		for (const pos of positions) {
+			if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE) {
+				list.push(this.grid[pos[0]][pos[1]]);
+			}
+		}
+
+		return list;
 	}
 }

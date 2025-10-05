@@ -160,7 +160,7 @@ var quests = [
         game.player.addToInventory("purple_flower_seeds", 3);
     }, function (_) { }, [
         {
-            asset: "action_harvest",
+            asset: "encyclopedia_icon",
             name: "Encyclopedia Unlocked (press E)"
         },
         {
@@ -179,7 +179,7 @@ var quests = [
             name: "3 x Emberfruit Seeds"
         },
         {
-            asset: "berries_seeds",
+            asset: "encyclopedia_icon",
             name: "Encyclopedia Entry Unlocked"
         }
     ]),

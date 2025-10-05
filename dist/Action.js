@@ -54,6 +54,7 @@ var Action = /** @class */ (function () {
                     this.harvest(game, ["berries_flower_seeds"], "tilled");
                     break;
             }
+            this.tile.stage = 0;
         }
         if (this.action === "harvest") {
             switch (this.tile.type) {
