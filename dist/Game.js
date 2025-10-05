@@ -70,6 +70,14 @@ var Game = /** @class */ (function () {
         var index = 0;
         for (var item in this.player.inventory) {
             if (this.player.inventory[item] > 0) {
+                if (this.mousePos.x >= index * 85 + 5 && this.mousePos.x <= index * 85 + 85 &&
+                    this.mousePos.y >= this.ctx.canvas.height - 85 && this.mousePos.y <= this.ctx.canvas.height - 5) {
+                    this.ctx.font = "20px Courier New";
+                    this.ctx.fillStyle = "black";
+                    this.ctx.fillRect(index * 85 + 5, this.ctx.canvas.height - 125, this.ctx.measureText(Item.itemData[item].name).width + 30, 30);
+                    this.ctx.fillStyle = "white";
+                    this.ctx.fillText(Item.itemData[item].name, index * 85 + 20, this.ctx.canvas.height - 105);
+                }
                 this.ctx.drawImage(this.asset("inventory_item"), index * 85 + 5, this.ctx.canvas.height - 85, 80, 80);
                 this.ctx.drawImage(this.asset((_a = Item.itemData[item]) === null || _a === void 0 ? void 0 : _a.asset), index * 85 + 18, this.ctx.canvas.height - 75, 60, 60);
                 this.ctx.fillStyle = "white";

@@ -22,15 +22,16 @@ var Entity = /** @class */ (function () {
 }());
 var Item = /** @class */ (function (_super) {
     __extends(Item, _super);
-    function Item(x, y, name) {
+    function Item(x, y, name, speedMult) {
         var _this = _super.call(this, x, y) || this;
         _this.item = name;
+        _this.speedMult = speedMult;
         return _this;
     }
     Item.prototype.update = function (game, delta) {
         var dir = Math.atan2(game.player.y - this.y, game.player.x - this.x);
-        this.x += Math.cos(dir) * delta * 10;
-        this.y += Math.sin(dir) * delta * 10;
+        this.x += Math.cos(dir) * delta * 14 * this.speedMult;
+        this.y += Math.sin(dir) * delta * 14 * this.speedMult;
         if (Math.hypot(game.player.x - this.x, game.player.y - this.y) < 30) {
             game.player.addToInventory(this.item, 1);
             return true;
@@ -46,15 +47,23 @@ var Item = /** @class */ (function (_super) {
     Item.itemData = {
         "flower": {
             "asset": "white_flower_icon",
-            "name": "Daisy"
+            "name": "Sunpetal"
         },
         "red_flower": {
             "asset": "red_flower_icon",
-            "name": "Rose"
+            "name": "Emberbloom"
         },
         "water_flower": {
             "asset": "water_flower_icon",
-            "name": "Water Lily"
+            "name": "Tidebloom"
+        },
+        "white_flower_seeds": {
+            "asset": "white_flower_seeds",
+            "name": "Sunpetal Seeds"
+        },
+        "red_flower_seeds": {
+            "asset": "red_flower_seeds",
+            "name": "Emberbloom Seeds"
         }
     };
     return Item;

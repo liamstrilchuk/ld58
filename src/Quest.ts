@@ -8,17 +8,20 @@ class Quest {
 	private onComplete: (game: Game) => void;
 	private complete = false;
 	private button: { x: number, y: number, w: number, h: number } = null;
+	private itemsGotten: [{ asset: string, name: string }];
 
 	constructor(
 		text: string,
 		completedText: string,
 		needs: { [key: string]: number },
-		onComplete: (game: Game) => void
+		onComplete: (game: Game) => void,
+		itemsGotten: [{ asset: string, name: string }]
 	) {
 		this.text = text;
 		this.completedText = completedText;
 		this.itemsNeeded = needs;
 		this.onComplete = onComplete;
+		this.itemsGotten = itemsGotten;
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
@@ -93,6 +96,21 @@ class Quest {
 				};
 			}
 		} else if (this.finishedRendering) {
+			for (const item of this.itemsGotten) {
+				ctx.fillStyle = "black";
+				ctx.font = "20px Courier New";
+				ctx.drawImage(
+					game.asset(item.asset),
+					left + 15, currentY,
+					60, 60
+				);
+				ctx.fillText(
+					item.name,
+					left + 85, currentY + 35
+				);
+				currentY += 60;
+			}
+
 			ctx.fillStyle = "#ddd";
 			ctx.fillRect(left + 20, currentY + 10, 140, 50);
 
@@ -171,7 +189,13 @@ const quests = [
 		},
 		(game: Game) => {
 			game.hoeUnlocked = true;
-		}
+		},
+		[
+			{
+				asset: "action_till",
+				name: "Hoe Unlocked"
+			}
+		]
 	),
 	new Quest(
 		"Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.",
@@ -181,6 +205,12 @@ const quests = [
 		},
 		(game: Game) => {
 			game.bookUnlocked = true;
-		}
+		},
+		[
+			{
+				asset: "action_harvest",
+				name: "Encyclopedia Unlocked"
+			}
+		]
 	)
 ];

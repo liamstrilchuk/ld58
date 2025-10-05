@@ -1,5 +1,6 @@
 var Tile = /** @class */ (function () {
     function Tile(game, x, y, type) {
+        this.stage = 0;
         this.x = x;
         this.y = y;
         this.type = type;
@@ -10,36 +11,42 @@ var Tile = /** @class */ (function () {
         this.determineImage(game);
     };
     Tile.prototype.determineImage = function (game) {
-        this.image = game.asset("blank_tile");
-        if (this.type === "sand") {
-            this.image = game.asset("sand_tile");
-        }
-        if (this.type === "tilled") {
-            this.image = game.asset("tilled_tile");
-        }
-        if (this.type === "water_flower") {
-            this.image = game.asset("water_flower");
-        }
-        if (this.type === "red_flower") {
-            this.image = game.asset("red_flower_tile");
-        }
-        if (this.type === "water") {
-            var rand = Math.random();
-            if (rand < 1 / 3) {
-                this.image = game.asset("water_tile");
-            }
-            else if (rand < 2 / 3) {
-                this.image = game.asset("water_tile2");
-            }
-            else {
-                this.image = game.asset("water_tile3");
-            }
-        }
-        if (this.type === "flower") {
-            this.image = game.asset("flower_tile");
-        }
-        if (this.type === "grass") {
-            this.image = Math.random() < 0.5 ? game.asset("grass_tile") : game.asset("grass_tile2");
+        switch (this.type) {
+            case "sand":
+                this.image = game.asset("sand_tile");
+                break;
+            case "tilled":
+                this.image = game.asset("tilled_tile");
+                break;
+            case "water_flower":
+                this.image = game.asset("water_flower");
+                break;
+            case "red_flower":
+                this.image = game.asset("red_flower_tile");
+                break;
+            case "water":
+                var rand = Math.random();
+                if (rand < 1 / 3) {
+                    this.image = game.asset("water_tile");
+                }
+                else if (rand < 2 / 3) {
+                    this.image = game.asset("water_tile2");
+                }
+                else {
+                    this.image = game.asset("water_tile3");
+                }
+                break;
+            case "flower":
+                this.image = game.asset("flower_tile");
+                break;
+            case "grass":
+                this.image = Math.random() < 0.5
+                    ? game.asset("grass_tile")
+                    : game.asset("grass_tile2");
+                break;
+            default:
+                this.image = game.asset("blank_tile");
+                break;
         }
     };
     Tile.prototype.render = function (game, ctx, isSelected, isHovered, structures) {
@@ -68,7 +75,7 @@ var Tile = /** @class */ (function () {
         // 	}
         // }
         if (isHovered || isSelected) {
-            var inset = Tile.recessedTypes.includes(this.type) ? 3 * game.TILE_SCALE : 0;
+            var inset = Tile.recessedTypes.includes(this.type) ? 3 * game.TILE_SCALE : 1 * game.TILE_SCALE;
             var inset2 = Tile.recessedTypes.includes(this.type) ? 0.7 * game.TILE_SCALE : 1.5 * game.TILE_SCALE;
             ctx.fillStyle = isSelected ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.1)";
             ctx.beginPath();
@@ -134,6 +141,9 @@ var Tile = /** @class */ (function () {
             case "red_flower":
                 options.push("harvest");
                 break;
+            case "tilled_tile":
+                options.push("plant");
+                break;
         }
         return options.filter(function (opt) {
             if (opt === "till" && !game.hoeUnlocked) {
@@ -143,5 +153,6 @@ var Tile = /** @class */ (function () {
         });
     };
     Tile.recessedTypes = ["water", "water_flower"];
+    Tile.plantTypes = ["plant_white_flower", "plant_red_flower"];
     return Tile;
 }());

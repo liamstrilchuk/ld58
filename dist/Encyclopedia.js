@@ -1,11 +1,11 @@
 var Encyclopedia = /** @class */ (function () {
     function Encyclopedia() {
         this.entries = [];
-        this.currentPage = 2;
+        this.currentPage = 0;
         this.entries = [
-            new EncyclopediaEntry("Daisy", "A common flower.", "flower"),
-            new EncyclopediaEntry("Rose", "A common flower.", "red_flower"),
-            new EncyclopediaEntry("Water Lily", "A common flower. Found in aquatic environments.", "water_flower")
+            new EncyclopediaEntry("Sunpetal", "Solnaria alba", "A common flower.", "flower"),
+            new EncyclopediaEntry("Emberbloom", "Velutina ardens", "A common flower.", "red_flower"),
+            new EncyclopediaEntry("Tidebloom", "Nymphaea lunaris", "A common flower. Found in aquatic environments.", "water_flower")
         ];
     }
     Encyclopedia.prototype.render = function (game, ctx) {
@@ -23,8 +23,9 @@ var Encyclopedia = /** @class */ (function () {
     return Encyclopedia;
 }());
 var EncyclopediaEntry = /** @class */ (function () {
-    function EncyclopediaEntry(name, desc, itemName) {
+    function EncyclopediaEntry(name, sciName, desc, itemName) {
         this.name = name;
+        this.sciName = sciName;
         this.desc = desc;
         this.itemName = itemName;
     }
@@ -37,9 +38,11 @@ var EncyclopediaEntry = /** @class */ (function () {
         ctx.fillStyle = "black";
         ctx.font = "bold 25px Courier New";
         ctx.fillText(this.name, left + 20, top + 150);
+        ctx.font = "italic 15px Courier New";
+        ctx.fillText(this.sciName, left + 20, top + 175);
         ctx.font = "20px Courier New";
         for (var i = 0; i < this.descLines.length; i++) {
-            ctx.fillText(this.descLines[i], left + 20, top + 180 + i * 25);
+            ctx.fillText(this.descLines[i], left + 20, top + 205 + i * 25);
         }
     };
     return EncyclopediaEntry;

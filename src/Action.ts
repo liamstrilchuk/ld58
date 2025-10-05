@@ -33,13 +33,13 @@ class Action {
 		ctx.fillRect(x + 2 + Tw / 4, y - 28, (Tw / 2 - 4) * this.progress / Action.actionTimes[this.action], 11);
 	}
 
-	private addItem(game: Game, name: string) {
+	private addItem(game: Game, name: string, speedMult=1) {
 		let { x, y } = Tile.renderPos(game, this.tile.x, this.tile.y);
 		game.addEntity(
 			new Item(
 				x + game.player.x - game.ctx.canvas.width / 2 + game.TILE_SCALE * game.TILE_WIDTH / 2,
 				y + game.player.y - game.ctx.canvas.height / 2 + game.TILE_SCALE * game.TILE_HEIGHT / 2,
-				name
+				name, speedMult
 			)
 		);
 	}
@@ -47,6 +47,7 @@ class Action {
 	private onCompletion(game: Game) {
 		if (this.tile.type === "flower" && this.action === "harvest") {
 			this.addItem(game, "flower");
+			this.addItem(game, "white_flower_seeds", 0.9);
 			this.tile.changeType(game, "grass");
 		}
 
@@ -57,6 +58,7 @@ class Action {
 
 		if (this.tile.type === "red_flower" && this.action === "harvest") {
 			this.addItem(game, "red_flower");
+			this.addItem(game, "red_flower_seeds", 0.9);
 			this.tile.changeType(game, "grass");
 		}
 

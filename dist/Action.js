@@ -20,13 +20,15 @@ var Action = /** @class */ (function () {
         ctx.fillStyle = "blue";
         ctx.fillRect(x + 2 + Tw / 4, y - 28, (Tw / 2 - 4) * this.progress / Action.actionTimes[this.action], 11);
     };
-    Action.prototype.addItem = function (game, name) {
+    Action.prototype.addItem = function (game, name, speedMult) {
+        if (speedMult === void 0) { speedMult = 1; }
         var _a = Tile.renderPos(game, this.tile.x, this.tile.y), x = _a.x, y = _a.y;
-        game.addEntity(new Item(x + game.player.x - game.ctx.canvas.width / 2 + game.TILE_SCALE * game.TILE_WIDTH / 2, y + game.player.y - game.ctx.canvas.height / 2 + game.TILE_SCALE * game.TILE_HEIGHT / 2, name));
+        game.addEntity(new Item(x + game.player.x - game.ctx.canvas.width / 2 + game.TILE_SCALE * game.TILE_WIDTH / 2, y + game.player.y - game.ctx.canvas.height / 2 + game.TILE_SCALE * game.TILE_HEIGHT / 2, name, speedMult));
     };
     Action.prototype.onCompletion = function (game) {
         if (this.tile.type === "flower" && this.action === "harvest") {
             this.addItem(game, "flower");
+            this.addItem(game, "white_flower_seeds", 0.9);
             this.tile.changeType(game, "grass");
         }
         if (this.tile.type === "water_flower" && this.action === "harvest") {
@@ -35,6 +37,7 @@ var Action = /** @class */ (function () {
         }
         if (this.tile.type === "red_flower" && this.action === "harvest") {
             this.addItem(game, "red_flower");
+            this.addItem(game, "red_flower_seeds", 0.9);
             this.tile.changeType(game, "grass");
         }
         if (["flower", "grass"].includes(this.tile.type) && this.action === "till") {

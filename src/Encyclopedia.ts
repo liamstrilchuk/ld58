@@ -1,21 +1,24 @@
 class Encyclopedia {
 	private entries: EncyclopediaEntry[] = [];
-	private currentPage: number = 2;
+	private currentPage: number = 0;
 
 	constructor() {
 		this.entries = [
 			new EncyclopediaEntry(
-				"Daisy",
+				"Sunpetal",
+				"Solnaria alba",
 				"A common flower.",
 				"flower"
 			),
 			new EncyclopediaEntry(
-				"Rose",
+				"Emberbloom",
+				"Velutina ardens",
 				"A common flower.",
 				"red_flower"
 			),
 			new EncyclopediaEntry(
-				"Water Lily",
+				"Tidebloom",
+				"Nymphaea lunaris",
 				"A common flower. Found in aquatic environments.",
 				"water_flower"
 			)
@@ -41,12 +44,14 @@ class Encyclopedia {
 
 class EncyclopediaEntry {
 	public name: string;
+	public sciName: string;
 	public desc: string;
 	public descLines: string[];
 	public itemName: string;
 
-	constructor(name: string, desc: string, itemName: string) {
+	constructor(name: string, sciName: string, desc: string, itemName: string) {
 		this.name = name;
+		this.sciName = sciName;
 		this.desc = desc;
 		this.itemName = itemName;
 	}
@@ -63,9 +68,12 @@ class EncyclopediaEntry {
 		ctx.font = "bold 25px Courier New";
 		ctx.fillText(this.name, left + 20, top + 150);
 
+		ctx.font = "italic 15px Courier New";
+		ctx.fillText(this.sciName, left + 20, top + 175);
+
 		ctx.font = "20px Courier New";
 		for (let i = 0; i < this.descLines.length; i++) {
-			ctx.fillText(this.descLines[i], left + 20, top + 180 + i * 25);
+			ctx.fillText(this.descLines[i], left + 20, top + 205 + i * 25);
 		}
 	}
 }

@@ -15,29 +15,39 @@ class Item extends Entity {
 	public static itemData = {
 		"flower": {
 			"asset": "white_flower_icon",
-			"name": "Daisy"
+			"name": "Sunpetal"
 		},
 		"red_flower": {
 			"asset": "red_flower_icon",
-			"name": "Rose"
+			"name": "Emberbloom"
 		},
 		"water_flower": {
 			"asset": "water_flower_icon",
-			"name": "Water Lily"
+			"name": "Tidebloom"
+		},
+		"white_flower_seeds": {
+			"asset": "white_flower_seeds",
+			"name": "Sunpetal Seeds"
+		},
+		"red_flower_seeds": {
+			"asset": "red_flower_seeds",
+			"name": "Emberbloom Seeds"
 		}
 	};
 	public item: string;
+	private speedMult: number;
 
-	constructor(x: number, y: number, name: string) {
+	constructor(x: number, y: number, name: string, speedMult: number) {
 		super(x, y);
 		this.item = name;
+		this.speedMult = speedMult;
 	}
 
 	public update(game: Game, delta: number): boolean {
 		const dir = Math.atan2(game.player.y - this.y, game.player.x - this.x);
 
-		this.x += Math.cos(dir) * delta * 10;
-		this.y += Math.sin(dir) * delta * 10;
+		this.x += Math.cos(dir) * delta * 14 * this.speedMult;
+		this.y += Math.sin(dir) * delta * 14 * this.speedMult;
 		
 		if (Math.hypot(game.player.x - this.x, game.player.y - this.y) < 30) {
 			game.player.addToInventory(this.item, 1);

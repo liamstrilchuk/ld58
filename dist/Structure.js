@@ -15,26 +15,32 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var Structure = /** @class */ (function (_super) {
     __extends(Structure, _super);
-    function Structure(x, y, width, height, asset) {
+    function Structure(x, y, width, height, assets, animSpeed) {
         var _this = _super.call(this, x, y) || this;
-        _this.asset = asset;
+        _this.frame = 0;
+        _this.assets = assets;
         _this.width = width;
         _this.height = height;
+        _this.animSpeed = animSpeed;
         return _this;
     }
     Structure.prototype.render = function (game, ctx) {
+        var asset = this.assets[this.frame];
         var _a = Tile.renderPos(game, this.x - 0.5, this.y + 2), x = _a.x, y = _a.y;
         var Tw = game.TILE_WIDTH * game.TILE_SCALE, Th = game.TILE_HEIGHT * game.TILE_SCALE;
-        var imgScale = (this.width * Tw) / this.asset.width;
-        var eachSide = (this.asset.width * imgScale - this.width * Tw) / 2;
-        ctx.drawImage(this.asset, x - eachSide - Tw / 2, y - this.asset.width * imgScale / 2 + Th / 2, this.width * Tw, this.height * Tw);
+        var imgScale = (this.width * Tw) / asset.width;
+        var eachSide = (asset.width * imgScale - this.width * Tw) / 2;
+        ctx.drawImage(asset, x - eachSide - Tw / 2, y - asset.width * imgScale / 2 + Th / 2, this.width * Tw, this.height * Tw);
+        if (game.frame % this.animSpeed === 0) {
+            this.frame = (this.frame + 1) % this.assets.length;
+        }
     };
     return Structure;
 }(Entity));
 var House = /** @class */ (function (_super) {
     __extends(House, _super);
     function House(game, x, y) {
-        return _super.call(this, x, y, 4, 4, game.asset("house")) || this;
+        return _super.call(this, x, y, 4, 4, [game.asset("house"), game.asset("house2"), game.asset("house3")], 60) || this;
     }
     House.prototype.update = function (game, delta) { return false; };
     ;

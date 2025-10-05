@@ -43,7 +43,7 @@ class Player extends Entity {
 			return;
 		}
 
-		if (game.frame % 5 === 0) {
+		if (game.frame % 10 === 0) {
 			this.walkFrame = (this.walkFrame + 1) % 4;
 		}
 

@@ -1,5 +1,5 @@
 var Quest = /** @class */ (function () {
-    function Quest(text, completedText, needs, onComplete) {
+    function Quest(text, completedText, needs, onComplete, itemsGotten) {
         this.lines = [];
         this.finishedRendering = false;
         this.charactersDone = 0;
@@ -9,6 +9,7 @@ var Quest = /** @class */ (function () {
         this.completedText = completedText;
         this.itemsNeeded = needs;
         this.onComplete = onComplete;
+        this.itemsGotten = itemsGotten;
     }
     Quest.prototype.render = function (game, ctx) {
         this.button = null;
@@ -60,6 +61,14 @@ var Quest = /** @class */ (function () {
             }
         }
         else if (this.finishedRendering) {
+            for (var _i = 0, _a = this.itemsGotten; _i < _a.length; _i++) {
+                var item = _a[_i];
+                ctx.fillStyle = "black";
+                ctx.font = "20px Courier New";
+                ctx.drawImage(game.asset(item.asset), left + 15, currentY, 60, 60);
+                ctx.fillText(item.name, left + 85, currentY + 35);
+                currentY += 60;
+            }
             ctx.fillStyle = "#ddd";
             ctx.fillRect(left + 20, currentY + 10, 140, 50);
             ctx.font = "18px Courier New";
@@ -126,8 +135,18 @@ var quests = [
         "red_flower": 0 //3
     }, function (game) {
         game.hoeUnlocked = true;
-    }),
+    }, [
+        {
+            asset: "action_till",
+            name: "Hoe Unlocked"
+        }
+    ]),
     new Quest("Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.", "Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!", {}, function (game) {
         game.bookUnlocked = true;
-    })
+    }, [
+        {
+            asset: "action_harvest",
+            name: "Encyclopedia Unlocked"
+        }
+    ])
 ];
