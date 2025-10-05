@@ -1,5 +1,7 @@
 class Player extends Entity {
 	private speed: number = 3;
+	private walkFrame: number = 0;
+	private walkDir: number = 0;
 	public inventory: { [key: string]: number } = {};
 
 	constructor(x: number, y: number) {
@@ -25,14 +27,24 @@ class Player extends Entity {
 			{ active: keys.right && keys.up, angle: Math.PI * (2 - 1 / 6) }
 		];
 
-		angles.reverse();
-		const dir = angles.find(val => val.active)?.angle;
+		let dir: number;
+
+		for (let i = 0; i < angles.length; i++) {
+			if (angles[i].active) {
+				dir = angles[i].angle;
+				this.walkDir = i;
+			}
+		}
 
 		const overTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
 		const speed = overTile?.type === "water" ? this.speed / 2 : this.speed;
 
 		if (typeof dir === "undefined") {
 			return;
+		}
+
+		if (game.frame % 5 === 0) {
+			this.walkFrame = (this.walkFrame + 1) % 4;
 		}
 
 		let newX = Math.cos(dir) * speed * delta;
@@ -50,8 +62,12 @@ class Player extends Entity {
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = "black";
-		ctx.fillRect(game.renderX(this.x) - 15, game.renderY(this.y) - 25, 30, 50);
+		const asset = game.graphics.player[this.walkDir][this.walkFrame];
+		ctx.drawImage(
+			asset,
+			game.renderX(this.x) - 60, game.renderY(this.y) - 60 * (asset.height / asset.width),
+			120, 120 * (asset.height / asset.width)
+		);
 	}
 
 	public addToInventory(name: string, amount: number) {

@@ -3,6 +3,7 @@ class InterfaceButton {
 	public y: number;
 	public action: string;
 	public hovered: boolean = false;
+	private asset: HTMLImageElement;
 
 	constructor(x: number, y: number, action: string) {
 		this.x = x;
@@ -11,11 +12,22 @@ class InterfaceButton {
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
+		if (!this.asset) {
+			switch (this.action) {
+				case "harvest":
+					this.asset = game.asset("action_harvest");
+					break;
+				case "till":
+					this.asset = game.asset("action_till");
+					break;
+			}
+		}
+
 		ctx.fillStyle = "white";
 		if (this.hovered) {
-			ctx.drawImage(game.asset("action_harvest"), this.x - 35, this.y - 35, 70, 70);
+			ctx.drawImage(this.asset, this.x - 35, this.y - 35, 70, 70);
 		} else {
-			ctx.drawImage(game.asset("action_harvest"), this.x - 30, this.y - 30, 60, 60);
+			ctx.drawImage(this.asset, this.x - 30, this.y - 30, 60, 60);
 		}
 	}
 }

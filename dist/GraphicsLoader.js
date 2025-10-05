@@ -1,6 +1,7 @@
 var GraphicsLoader = /** @class */ (function () {
     function GraphicsLoader() {
         this.assets = {};
+        this.player = [];
         this.loadAssets();
     }
     GraphicsLoader.prototype.loadAssets = function () {
@@ -24,6 +25,12 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["action_box"] = this.loadImage("assets/action_box.png");
         this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
         this.assets["action_till"] = this.loadImage("assets/action_till.png");
+        for (var d = 0; d < 8; d++) {
+            this.player.push([]);
+            for (var f = 0; f < 4; f++) {
+                this.player[this.player.length - 1].push(this.loadImage("assets/player_anim/D".concat(d, "-F").concat(f, ".png")));
+            }
+        }
     };
     GraphicsLoader.prototype.loadImage = function (src) {
         var image = new Image();

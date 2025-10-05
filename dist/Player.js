@@ -18,11 +18,12 @@ var Player = /** @class */ (function (_super) {
     function Player(x, y) {
         var _this = _super.call(this, x, y) || this;
         _this.speed = 3;
+        _this.walkFrame = 0;
+        _this.walkDir = 0;
         _this.inventory = {};
         return _this;
     }
     Player.prototype.update = function (game, delta) {
-        var _a;
         var keys = {
             left: game.getKey("a") || game.getKey("arrowleft"),
             right: game.getKey("d") || game.getKey("arrowright"),
@@ -39,12 +40,20 @@ var Player = /** @class */ (function (_super) {
             { active: keys.right && keys.down, angle: Math.PI / 6 },
             { active: keys.right && keys.up, angle: Math.PI * (2 - 1 / 6) }
         ];
-        angles.reverse();
-        var dir = (_a = angles.find(function (val) { return val.active; })) === null || _a === void 0 ? void 0 : _a.angle;
+        var dir;
+        for (var i = 0; i < angles.length; i++) {
+            if (angles[i].active) {
+                dir = angles[i].angle;
+                this.walkDir = i;
+            }
+        }
         var overTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
         var speed = (overTile === null || overTile === void 0 ? void 0 : overTile.type) === "water" ? this.speed / 2 : this.speed;
         if (typeof dir === "undefined") {
             return;
+        }
+        if (game.frame % 5 === 0) {
+            this.walkFrame = (this.walkFrame + 1) % 4;
         }
         var newX = Math.cos(dir) * speed * delta;
         var newY = Math.sin(dir) * speed * delta;
@@ -57,8 +66,8 @@ var Player = /** @class */ (function (_super) {
         return false;
     };
     Player.prototype.render = function (game, ctx) {
-        ctx.fillStyle = "black";
-        ctx.fillRect(game.renderX(this.x) - 15, game.renderY(this.y) - 25, 30, 50);
+        var asset = game.graphics.player[this.walkDir][this.walkFrame];
+        ctx.drawImage(asset, game.renderX(this.x) - 60, game.renderY(this.y) - 60 * (asset.height / asset.width), 120, 120 * (asset.height / asset.width));
     };
     Player.prototype.addToInventory = function (name, amount) {
         if (!this.inventory[name]) {

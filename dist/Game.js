@@ -9,6 +9,7 @@ var Game = /** @class */ (function () {
         this.currentAction = null;
         this.entities = [];
         this.buttons = [];
+        this.encyclopedia = new Encyclopedia();
         this.TILE_WIDTH = 31;
         this.TILE_HEIGHT = 15;
         this.TILE_SCALE = 6;
@@ -17,7 +18,8 @@ var Game = /** @class */ (function () {
         this.hoeUnlocked = false;
         this.bookUnlocked = true;
         this.currentQuest = 0;
-        this.questSelected = true;
+        this.questSelected = false;
+        this.encyclopediaSelected = false;
         this.ctx = ctx;
     }
     Game.prototype.addEntity = function (entity) {
@@ -79,8 +81,11 @@ var Game = /** @class */ (function () {
                 index++;
             }
         }
-        if (this.questSelected) {
+        if (this.questSelected && this.currentQuest < quests.length) {
             quests[this.currentQuest].render(this, this.ctx);
+        }
+        if (this.encyclopediaSelected) {
+            this.encyclopedia.render(this, this.ctx);
         }
     };
     Game.prototype.renderX = function (x) {
@@ -114,6 +119,19 @@ var Game = /** @class */ (function () {
     Game.prototype.onKeyDown = function (key) {
         if (key === "q") {
             this.questSelected = !this.questSelected;
+            this.encyclopediaSelected = false;
+        }
+        if (key === "e") {
+            this.encyclopediaSelected = !this.encyclopediaSelected;
+            this.questSelected = false;
+        }
+        if (key === "arrowleft" && this.encyclopediaSelected) {
+            this.encyclopedia.prevItem();
+            return;
+        }
+        if (key === "arrowright" && this.encyclopediaSelected) {
+            this.encyclopedia.nextItem();
+            return;
         }
         this.keys[key] = true;
     };
@@ -131,6 +149,10 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.onMouseDown = function () {
         this.mouseDown = true;
+        if (this.questSelected) {
+            quests[this.currentQuest].onMouseDown(this, this.mousePos.x, this.mousePos.y);
+            return;
+        }
         var button = this.findHoveredButton();
         if (button) {
             if (this.currentAction || !this.world.selectedTile) {

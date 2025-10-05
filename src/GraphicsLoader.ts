@@ -1,5 +1,6 @@
 class GraphicsLoader {
 	public assets: { [key: string]: HTMLImageElement } = {};
+	public player: HTMLImageElement[][] = [];
 
 	constructor() {
 		this.loadAssets();
@@ -34,6 +35,16 @@ class GraphicsLoader {
 		this.assets["action_box"] = this.loadImage("assets/action_box.png");
 		this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
 		this.assets["action_till"] = this.loadImage("assets/action_till.png");
+
+		for (let d = 0; d < 8; d++) {
+			this.player.push([]);
+
+			for (let f = 0; f < 4; f++) {
+				this.player[this.player.length - 1].push(
+					this.loadImage(`assets/player_anim/D${d}-F${f}.png`)
+				);
+			}
+		}
 	}
 
 	private loadImage(src: string): HTMLImageElement {

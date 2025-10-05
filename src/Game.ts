@@ -5,10 +5,11 @@ class Game {
 	private mousePos: { x: number, y: number } = { x: 0, y: 0 };
 	public player: Player = new Player(0, 0);
 	private lastFrameTime: number = new Date().getTime();
-	private graphics = new GraphicsLoader();
+	public graphics = new GraphicsLoader();
 	private currentAction: Action = null;
 	private entities: Entity[] = [];
 	public buttons: InterfaceButton[] = [];
+	private encyclopedia = new Encyclopedia();
 
 	public TILE_WIDTH = 31;
 	public TILE_HEIGHT = 15;
@@ -20,7 +21,8 @@ class Game {
 	public hoeUnlocked = false;
 	public bookUnlocked = true;
 	public currentQuest = 0;
-	public questSelected = true;
+	public questSelected = false;
+	public encyclopediaSelected = false;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
@@ -109,8 +111,12 @@ class Game {
 			}
 		}
 
-		if (this.questSelected) {
+		if (this.questSelected && this.currentQuest < quests.length) {
 			quests[this.currentQuest].render(this, this.ctx);
+		}
+
+		if (this.encyclopediaSelected) {
+			this.encyclopedia.render(this, this.ctx);
 		}
 	}
 
@@ -157,7 +163,24 @@ class Game {
 	public onKeyDown(key: string) {
 		if (key === "q") {
 			this.questSelected = !this.questSelected;
+			this.encyclopediaSelected = false;
 		}
+
+		if (key === "e") {
+			this.encyclopediaSelected = !this.encyclopediaSelected;
+			this.questSelected = false;
+		}
+
+		if (key === "arrowleft" && this.encyclopediaSelected) {
+			this.encyclopedia.prevItem();
+			return;
+		}
+
+		if (key === "arrowright" && this.encyclopediaSelected) {
+			this.encyclopedia.nextItem();
+			return;
+		}
+
 		this.keys[key] = true;
 	}
 
@@ -177,6 +200,11 @@ class Game {
 
 	public onMouseDown() {
 		this.mouseDown = true;
+
+		if (this.questSelected) {
+			quests[this.currentQuest].onMouseDown(this, this.mousePos.x, this.mousePos.y);
+			return;
+		}
 
 		const button = this.findHoveredButton();
 		if (button) {
