@@ -112,6 +112,19 @@ var Tile = /** @class */ (function () {
             ctx.fill();
         }
     };
+    Tile.prototype.renderSelectedTile = function (game, ctx) {
+        if (!Tile.plantNames[this.type]) {
+            return;
+        }
+        var _a = Tile.renderPos(game, this.x, this.y), x = _a.x, y = _a.y;
+        ctx.font = "bold 20px Courier New";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(Tile.plantNames[this.type], x + game.TILE_SCALE * game.TILE_WIDTH / 2, y + 100);
+        ctx.strokeStyle = "black";
+        ctx.strokeText(Tile.plantNames[this.type], x + game.TILE_SCALE * game.TILE_WIDTH / 2, y + 100);
+        ctx.textAlign = "left";
+    };
     Tile.renderPos = function (game, x, y) {
         return {
             x: game.renderX(x * game.TILE_SCALE * (game.TILE_WIDTH / 2 - 0.5)
@@ -178,6 +191,7 @@ var Tile = /** @class */ (function () {
                 if (stage >= 2) {
                     options.push("harvest");
                 }
+                options.push("remove");
                 break;
         }
         return options.filter(function (opt) {
@@ -194,6 +208,13 @@ var Tile = /** @class */ (function () {
         "purple_flower_tilled": 1 / 2000,
         "yellow_flower_tilled": 1 / 1000,
         "berries_flower_tilled": 1 / 1000
+    };
+    Tile.plantNames = {
+        "white_flower_tilled": "Sunpetal",
+        "red_flower_tilled": "Emberbloom",
+        "purple_flower_tilled": "Dreamveil",
+        "yellow_flower_tilled": "Sunspire",
+        "berries_flower_tilled": "Emberfruit"
     };
     return Tile;
 }());

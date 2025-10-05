@@ -9,7 +9,7 @@ class Game {
 	private currentAction: Action = null;
 	private entities: Entity[] = [];
 	public buttons: InterfaceButton[] = [];
-	private encyclopedia = new Encyclopedia();
+	public encyclopedia = new Encyclopedia();
 
 	public TILE_WIDTH = 31;
 	public TILE_HEIGHT = 15;
@@ -81,6 +81,7 @@ class Game {
 
 		this.buttons.forEach(button => button.render(this, this.ctx));
 		this.currentAction?.render(this, this.ctx);
+		this.world.selectedTile?.renderSelectedTile(this, this.ctx);
 		this.renderInterface();
 	}
 
@@ -89,6 +90,10 @@ class Game {
 		this.inventoryButtons = [];
 
 		for (const item in this.player.inventory) {
+			if (this.selectingSeeds && !Item.itemData[item].can_plant) {
+				continue;
+			}
+
 			if (this.player.inventory[item] > 0) {
 				if (this.mousePos.x >= index * 85 + 5 && this.mousePos.x <= index * 85 + 85 &&
 					this.mousePos.y >= this.ctx.canvas.height - 85 && this.mousePos.y <= this.ctx.canvas.height - 5) {

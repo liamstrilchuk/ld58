@@ -5,26 +5,34 @@ class Quest {
 	private finishedRendering = false;
 	private charactersDone = 0;
 	private itemsNeeded: { [key: string]: number };
+	private onStart: (game: Game) => void;
 	private onComplete: (game: Game) => void;
 	private complete = false;
 	private button: { x: number, y: number, w: number, h: number } = null;
 	private itemsGotten: { asset: string, name: string }[];
+	private startFuncRun = false;
 
 	constructor(
 		text: string,
 		completedText: string,
 		needs: { [key: string]: number },
 		onComplete: (game: Game) => void,
+		onStart: (game: Game) => void,
 		itemsGotten: { asset: string, name: string }[]
 	) {
 		this.text = text;
 		this.completedText = completedText;
 		this.itemsNeeded = needs;
+		this.onStart = onStart;
 		this.onComplete = onComplete;
 		this.itemsGotten = itemsGotten;
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
+		if (!this.startFuncRun) {
+			this.startFuncRun = true;
+			this.onStart(game);
+		}
 		this.button = null;
 
 		if (!this.finishedRendering && game.frame % 1 === 0) {
@@ -70,7 +78,7 @@ class Quest {
 				if ((game.player.inventory[need] || 0) < this.itemsNeeded[need]) {
 					allAcquired = false;
 				}
-				ctx.fillStyle = game.player.inventory[need] >= this.itemsNeeded[need] ? "black" : "red";
+				ctx.fillStyle = (game.player.inventory[need] || 0) >= this.itemsNeeded[need] ? "black" : "red";
 				ctx.drawImage(
 					game.asset(Item.itemData[need].asset),
 					left + 15, currentY,
@@ -180,7 +188,7 @@ function splitLines(ctx: CanvasRenderingContext2D, text: string, maxWidth=470): 
 
 const quests = [
 	new Quest(
-		"So, you wanted to learn a little something about farming, did you? Well, I can help with that. I've been farming for over sixty years. Tell you what, you bring me some flowers for my garden and I'll give you some tools to get you started.",
+		"So, you wanted to learn a little something about farming, did you? Well, I can help with that. I've been farming for years. Tell you what, you bring me some flowers for my garden and I'll give you some tools to get you started.",
 		"Oh, thank you! As promised, here's a tool that'll help you get started farming in no time. Take some seeds as well. Once you've tried it out, come back here and I'll give you something else.",
 		{
 			"flower": 0,//5,
@@ -191,6 +199,7 @@ const quests = [
 			game.hoeUnlocked = true;
 			game.player.addToInventory("yellow_flower_seeds", 3);
 		},
+		(_) => {},
 		[
 			{
 				asset: "action_till",
@@ -206,16 +215,61 @@ const quests = [
 		"Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.",
 		"Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!",
 		{
-			"yellow_flower": 1
+			"yellow_flower": 0//1
 		},
 		(game: Game) => {
 			game.bookUnlocked = true;
+			game.player.addToInventory("purple_flower_seeds", 3);
 		},
+		(_) => {},
 		[
 			{
 				asset: "action_harvest",
-				name: "Encyclopedia Unlocked"
+				name: "Encyclopedia Unlocked (press E)"
+			},
+			{
+				asset: "purple_seeds",
+				name: "3 x Dreamveil Seeds"
 			}
 		]
+	),
+	new Quest(
+		"Here are some more seeds to try growing. Let me know once you figure it out! Make sure to look in the encyclopedia to see what this plant needs to grow.",
+		"Wow, I'm impressed! Now, a new challenge for you...",
+		{
+			"purple_flower": 0//1
+		},
+		(game: Game) => {
+			game.player.addToInventory("berries_flower_seeds", 3);
+			game.encyclopedia.addEntry(
+				new EncyclopediaEntry(
+					"Emberfruit",
+					"Fructa cordata",
+					"An extremely delicious fruit, but not for amateur botanists. The Emberfruit is very particular about where it is grown. It must be next to water, and have an Emberbloom growing adjacent to it.",
+					"berries_flower"
+				)
+			);
+		},
+		(game: Game) => {},
+		[
+			{
+				asset: "berries_seeds",
+				name: "3 x Emberfruit Seeds"
+			},
+			{
+				asset: "berries_seeds",
+				name: "Encyclopedia Entry Unlocked"
+			}
+		]
+	),
+	new Quest(
+		"The Emberfruit is a tricky plant to grow, because it needs to be grown next to another plant. They're also extremely tasty!",
+		"Thanks for the snack! (nom nom)",
+		{
+			"berries_flower": 0//1
+		},
+		(game: Game) => {},
+		(game: Game) => {},
+		[]
 	)
 ];

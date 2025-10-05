@@ -2,7 +2,8 @@ class Action {
 	private static actionTimes: { [key: string]: number } = {
 		harvest: 30,
 		till: 60,
-		plant: 20
+		plant: 20,
+		remove: 20
 	};
 	private tile: Tile;
 	private action: string;
@@ -59,6 +60,26 @@ class Action {
 	}
 
 	private onCompletion(game: Game) {
+		if (this.action === "remove") {
+			switch (this.tile.type) {
+				case "red_flower_tilled":
+					this.harvest(game, [ "red_flower_seeds" ], "tilled");
+					break;
+				case "white_flower_tilled":
+					this.harvest(game, [ "white_flower_seeds" ], "tilled");
+					break;
+				case "yellow_flower_tilled":
+					this.harvest(game, [ "yellow_flower_seeds" ], "tilled");
+					break;
+				case "purple_flower_tilled":
+					this.harvest(game, [ "purple_flower_seeds" ], "tilled");
+					break;
+				case "berries_flower_tilled":
+					this.harvest(game, [ "berries_flower_seeds" ], "tilled");
+					break;
+			}
+		}
+
 		if (this.action === "harvest") {
 			switch (this.tile.type) {
 				case "flower":

@@ -35,6 +35,7 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["action_box"] = this.loadImage("assets/action_box.png");
         this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
         this.assets["action_till"] = this.loadImage("assets/action_till.png");
+        this.assets["action_x"] = this.loadImage("assets/action_x.png");
         this.assets["encyclopedia"] = this.loadImage("assets/encyclopedia.png");
         this.assets["left-off"] = this.loadImage("assets/left-off.png");
         this.assets["left-on"] = this.loadImage("assets/left-on.png");

@@ -17,6 +17,9 @@ var InterfaceButton = /** @class */ (function () {
                 case "plant":
                     this.asset = game.asset("action_harvest");
                     break;
+                case "remove":
+                    this.asset = game.asset("action_x");
+                    break;
             }
         }
         ctx.fillStyle = "white";

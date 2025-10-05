@@ -15,6 +15,14 @@ class Tile {
 		"berries_flower_tilled": 1/1000
 	};
 
+	private static plantNames = {
+		"white_flower_tilled": "Sunpetal",
+		"red_flower_tilled": "Emberbloom",
+		"purple_flower_tilled": "Dreamveil",
+		"yellow_flower_tilled": "Sunspire",
+		"berries_flower_tilled": "Emberfruit"
+	};
+
 	constructor(game: Game, x: number, y: number, type: string) {
 		this.x = x;
 		this.y = y;
@@ -145,6 +153,21 @@ class Tile {
 		}
 	}
 
+	public renderSelectedTile(game: Game, ctx: CanvasRenderingContext2D) {
+		if (!Tile.plantNames[this.type]) {
+			return;
+		}
+
+		const { x, y } = Tile.renderPos(game, this.x, this.y);
+		ctx.font = "bold 20px Courier New";
+		ctx.fillStyle = "white";
+		ctx.textAlign = "center";
+		ctx.fillText(Tile.plantNames[this.type], x + game.TILE_SCALE * game.TILE_WIDTH / 2, y + 100);
+		ctx.strokeStyle = "black";
+		ctx.strokeText(Tile.plantNames[this.type], x + game.TILE_SCALE * game.TILE_WIDTH / 2, y + 100);
+		ctx.textAlign = "left";
+	}
+
 	public static renderPos(game: Game, x: number, y: number): { x: number, y: number } {
 		return {
 			x: game.renderX(
@@ -218,6 +241,7 @@ class Tile {
 				if (stage >= 2) {
 					options.push("harvest");
 				}
+				options.push("remove");
 				break;
 		}
 

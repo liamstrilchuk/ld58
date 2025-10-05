@@ -7,10 +7,12 @@ var Encyclopedia = /** @class */ (function () {
             new EncyclopediaEntry("Emberbloom", "Velutina ardens", "A common flower.", "red_flower"),
             new EncyclopediaEntry("Tidebloom", "Nymphaea lunaris", "A common flower. Found in aquatic environments.", "water_flower"),
             new EncyclopediaEntry("Sunspire", "Heliora aurelia", "A rugged plant, which can be grown almost anywhere. Has been described as tasting like lemons.", "yellow_flower"),
-            new EncyclopediaEntry("Dreamveil", "Nymphaea violacea", "A distant relative of the Tidebloom. Must be grown next to water. Said to treat many kinds of ailments, though this has not been proven.", "purple_flower"),
-            new EncyclopediaEntry("Emberfruit", "Fructa cordata", "An extremely delicious fruit, but not for amateur botanists. The Emberfruit is very particular about where it is grown. It must be next to water, and have an Emberbloom growing next to it.", "berries_flower")
+            new EncyclopediaEntry("Dreamveil", "Nymphaea violacea", "A distant relative of the Tidebloom. Must be grown adjacent to water. Said to treat many kinds of ailments, though this has not been proven.", "purple_flower")
         ];
     }
+    Encyclopedia.prototype.addEntry = function (entry) {
+        this.entries.push(entry);
+    };
     Encyclopedia.prototype.render = function (game, ctx) {
         var top = ctx.canvas.height / 2 - 400, left = ctx.canvas.width / 2 - 400;
         var asset = game.asset("encyclopedia");

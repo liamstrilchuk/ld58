@@ -31,16 +31,14 @@ class Encyclopedia {
 			new EncyclopediaEntry(
 				"Dreamveil",
 				"Nymphaea violacea",
-				"A distant relative of the Tidebloom. Must be grown next to water. Said to treat many kinds of ailments, though this has not been proven.",
+				"A distant relative of the Tidebloom. Must be grown adjacent to water. Said to treat many kinds of ailments, though this has not been proven.",
 				"purple_flower"
-			),
-			new EncyclopediaEntry(
-				"Emberfruit",
-				"Fructa cordata",
-				"An extremely delicious fruit, but not for amateur botanists. The Emberfruit is very particular about where it is grown. It must be next to water, and have an Emberbloom growing next to it.",
-				"berries_flower"
 			)
 		];
+	}
+
+	public addEntry(entry: EncyclopediaEntry) {
+		this.entries.push(entry);
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {

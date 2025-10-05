@@ -58,7 +58,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.render = function () {
         var _this = this;
-        var _a;
+        var _a, _b;
         this.infoText = "";
         this.ctx.fillStyle = "#8db3c5";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -68,6 +68,7 @@ var Game = /** @class */ (function () {
         this.world.renderAfter(this, this.ctx);
         this.buttons.forEach(function (button) { return button.render(_this, _this.ctx); });
         (_a = this.currentAction) === null || _a === void 0 ? void 0 : _a.render(this, this.ctx);
+        (_b = this.world.selectedTile) === null || _b === void 0 ? void 0 : _b.renderSelectedTile(this, this.ctx);
         this.renderInterface();
     };
     Game.prototype.renderInterface = function () {
@@ -75,6 +76,9 @@ var Game = /** @class */ (function () {
         var index = 0;
         this.inventoryButtons = [];
         for (var item in this.player.inventory) {
+            if (this.selectingSeeds && !Item.itemData[item].can_plant) {
+                continue;
+            }
             if (this.player.inventory[item] > 0) {
                 if (this.mousePos.x >= index * 85 + 5 && this.mousePos.x <= index * 85 + 85 &&
                     this.mousePos.y >= this.ctx.canvas.height - 85 && this.mousePos.y <= this.ctx.canvas.height - 5) {
