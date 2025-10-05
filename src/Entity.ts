@@ -48,7 +48,7 @@ class Item extends Entity {
 			"name": "Dreamveil",
 			"can_plant": false
 		},
-		"yellow_seeds": {
+		"yellow_flower_seeds": {
 			"asset": "yellow_seeds",
 			"name": "Sunspire Seeds",
 			"can_plant": true

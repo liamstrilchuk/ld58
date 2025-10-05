@@ -71,10 +71,19 @@ class Action {
 					this.harvest(game, [ "red_flower", "red_flower_seeds" ], "grass");
 					break;
 				case "red_flower_tilled":
-					this.harvest(game, [ "red_flower", "red_flower_seeds" ], "tilled");
+					this.harvest(game, [ "red_flower", "red_flower_seeds", "red_flower_seeds" ], "tilled");
 					break;
 				case "white_flower_tilled":
-					this.harvest(game, [ "flower", "white_flower_seeds" ], "tilled");
+					this.harvest(game, [ "flower", "white_flower_seeds", "white_flower_seeds" ], "tilled");
+					break;
+				case "yellow_flower_tilled":
+					this.harvest(game, [ "yellow_flower", "yellow_flower_seeds", "yellow_flower_seeds" ], "tilled");
+					break;
+				case "purple_flower_tilled":
+					this.harvest(game, [ "purple_flower", "purple_flower_seeds", "purple_flower_seeds" ], "tilled");
+					break;
+				case "berries_flower_tilled":
+					this.harvest(game, [ "berries_flower", "berries_flower_seeds", "berries_flower_seeds" ], "tilled");
 					break;
 			}
 

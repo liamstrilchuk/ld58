@@ -21,16 +21,51 @@ class Encyclopedia {
 				"Nymphaea lunaris",
 				"A common flower. Found in aquatic environments.",
 				"water_flower"
+			),
+			new EncyclopediaEntry(
+				"Sunspire",
+				"Heliora aurelia",
+				"A rugged plant, which can be grown almost anywhere. Has been described as tasting like lemons.",
+				"yellow_flower"
+			),
+			new EncyclopediaEntry(
+				"Dreamveil",
+				"Nymphaea violacea",
+				"A distant relative of the Tidebloom. Must be grown next to water. Said to treat many kinds of ailments, though this has not been proven.",
+				"purple_flower"
+			),
+			new EncyclopediaEntry(
+				"Emberfruit",
+				"Fructa cordata",
+				"An extremely delicious fruit, but not for amateur botanists. The Emberfruit is very particular about where it is grown. It must be next to water, and have an Emberbloom growing next to it.",
+				"berries_flower"
 			)
 		];
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
-		const top = ctx.canvas.height / 2 - 300, left = ctx.canvas.width / 2 - 250;
-		ctx.fillStyle = "white";
-		ctx.fillRect(left, top, 500, 600);
+		const top = ctx.canvas.height / 2 - 400, left = ctx.canvas.width / 2 - 400;
 
-		this.entries[this.currentPage].render(game, ctx, top, left);
+		const asset = game.asset("encyclopedia");
+		ctx.drawImage(asset, left, top, 800, 800 * (asset.height / asset.width));
+
+		const leftAsset = game.asset(this.currentPage === 0 ? "left-off" : "left-on");
+		if (game.mousePos.x >= left + 150 && game.mousePos.x <= left + 150 + 96 &&
+			game.mousePos.y >= top + 595 && game.mousePos.y <= top + 595 + 96 && !game.mouseDown) {
+			ctx.drawImage(leftAsset, left + 146, top + 591, 104, 104);
+		} else {
+			ctx.drawImage(leftAsset, left + 150, top + 595, 96, 96);
+		}
+
+		const rightAsset = game.asset(this.currentPage === this.entries.length - 1 ? "right-off" : "right-on");
+		if (game.mousePos.x >= left + 520 && game.mousePos.x <= left + 520 + 96 &&
+			game.mousePos.y >= top + 595 && game.mousePos.y <= top + 595 + 96 && !game.mouseDown) {
+			ctx.drawImage(rightAsset, left + 516, top + 591, 104, 104);
+		} else {
+			ctx.drawImage(rightAsset, left + 520, top + 595, 96, 96);
+		}
+
+		this.entries[this.currentPage].render(game, ctx, top + 90, left + 150);
 	}
 
 	public prevItem() {
@@ -39,6 +74,20 @@ class Encyclopedia {
 
 	public nextItem() {
 		this.currentPage = Math.min(this.entries.length - 1, this.currentPage + 1);
+	}
+
+	public onMouseDown(game: Game, x: number, y: number) {
+		const top = game.ctx.canvas.height / 2 - 400, left = game.ctx.canvas.width / 2 - 400;
+
+		if (x >= left + 150 && x <= left + 150 + 96 &&
+			y >= top + 595 && y <= top + 595 + 96) {
+			this.prevItem();
+		}
+
+		if (x >= left + 520 && x <= left + 520 + 96 &&
+			y >= top + 595 && y <= top + 595 + 96) {
+			this.nextItem();
+		}
 	}
 }
 
@@ -58,7 +107,7 @@ class EncyclopediaEntry {
 
 	public render(game: Game, ctx: CanvasRenderingContext2D, top: number, left: number) {
 		if (!this.descLines) {
-			this.descLines = splitLines(ctx, this.desc);
+			this.descLines = splitLines(ctx, this.desc, 440);
 		}
 
 		ctx.drawImage(game.asset("inventory_item"), left + 20, top + 20, 100, 100);
@@ -66,14 +115,14 @@ class EncyclopediaEntry {
 
 		ctx.fillStyle = "black";
 		ctx.font = "bold 25px Courier New";
-		ctx.fillText(this.name, left + 20, top + 150);
+		ctx.fillText(this.name, left + 135, top + 50);
 
 		ctx.font = "italic 15px Courier New";
-		ctx.fillText(this.sciName, left + 20, top + 175);
+		ctx.fillText(this.sciName, left + 135, top + 75);
 
 		ctx.font = "20px Courier New";
 		for (let i = 0; i < this.descLines.length; i++) {
-			ctx.fillText(this.descLines[i], left + 20, top + 205 + i * 25);
+			ctx.fillText(this.descLines[i], left + 20, top + 155 + i * 25);
 		}
 	}
 }

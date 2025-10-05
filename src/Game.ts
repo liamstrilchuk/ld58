@@ -1,8 +1,8 @@
 class Game {
 	public ctx: CanvasRenderingContext2D;
 	private keys: { [key: string]: boolean } = {};
-	private mouseDown: boolean = false;
-	private mousePos: { x: number, y: number } = { x: 0, y: 0 };
+	public mouseDown: boolean = false;
+	public mousePos: { x: number, y: number } = { x: 0, y: 0 };
 	public player: Player = new Player(0, 0);
 	private lastFrameTime: number = new Date().getTime();
 	public graphics = new GraphicsLoader();
@@ -225,6 +225,12 @@ class Game {
 			this.questSelected = false;
 		}
 
+		if (key === "escape") {
+			this.encyclopediaSelected = false;
+			this.questSelected = false;
+			this.selectingSeeds = false;
+		}
+
 		if (key === "arrowleft" && this.encyclopediaSelected) {
 			this.encyclopedia.prevItem();
 			return;
@@ -257,6 +263,11 @@ class Game {
 
 		if (this.questSelected) {
 			quests[this.currentQuest].onMouseDown(this, this.mousePos.x, this.mousePos.y);
+			return;
+		}
+
+		if (this.encyclopediaSelected) {
+			this.encyclopedia.onMouseDown(this, this.mousePos.x, this.mousePos.y);
 			return;
 		}
 

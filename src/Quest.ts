@@ -8,14 +8,14 @@ class Quest {
 	private onComplete: (game: Game) => void;
 	private complete = false;
 	private button: { x: number, y: number, w: number, h: number } = null;
-	private itemsGotten: [{ asset: string, name: string }];
+	private itemsGotten: { asset: string, name: string }[];
 
 	constructor(
 		text: string,
 		completedText: string,
 		needs: { [key: string]: number },
 		onComplete: (game: Game) => void,
-		itemsGotten: [{ asset: string, name: string }]
+		itemsGotten: { asset: string, name: string }[]
 	) {
 		this.text = text;
 		this.completedText = completedText;
@@ -154,7 +154,7 @@ class Quest {
 	}
 }
 
-function splitLines(ctx: CanvasRenderingContext2D, text: string): string[] {
+function splitLines(ctx: CanvasRenderingContext2D, text: string, maxWidth=470): string[] {
 	const lines = [];
 	ctx.font = "20px Courier New";
 	ctx.fillStyle = "black";
@@ -165,7 +165,7 @@ function splitLines(ctx: CanvasRenderingContext2D, text: string): string[] {
 	for (const word of words) {
 		const width = ctx.measureText(currentLine + " " + word).width;
 
-		if (width > 470) {
+		if (width > maxWidth) {
 			lines.push(currentLine);
 			currentLine = word;
 		} else {
@@ -189,11 +189,16 @@ const quests = [
 		},
 		(game: Game) => {
 			game.hoeUnlocked = true;
+			game.player.addToInventory("yellow_flower_seeds", 3);
 		},
 		[
 			{
 				asset: "action_till",
 				name: "Hoe Unlocked"
+			},
+			{
+				asset: "yellow_seeds",
+				name: "3 x Sunspire Seeds"
 			}
 		]
 	),
@@ -201,7 +206,7 @@ const quests = [
 		"Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.",
 		"Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!",
 		{
-
+			"yellow_flower": 1
 		},
 		(game: Game) => {
 			game.bookUnlocked = true;

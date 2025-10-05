@@ -169,6 +169,11 @@ var Game = /** @class */ (function () {
             this.encyclopediaSelected = !this.encyclopediaSelected;
             this.questSelected = false;
         }
+        if (key === "escape") {
+            this.encyclopediaSelected = false;
+            this.questSelected = false;
+            this.selectingSeeds = false;
+        }
         if (key === "arrowleft" && this.encyclopediaSelected) {
             this.encyclopedia.prevItem();
             return;
@@ -195,6 +200,10 @@ var Game = /** @class */ (function () {
         this.mouseDown = true;
         if (this.questSelected) {
             quests[this.currentQuest].onMouseDown(this, this.mousePos.x, this.mousePos.y);
+            return;
+        }
+        if (this.encyclopediaSelected) {
+            this.encyclopedia.onMouseDown(this, this.mousePos.x, this.mousePos.y);
             return;
         }
         for (var _i = 0, _a = this.inventoryButtons; _i < _a.length; _i++) {

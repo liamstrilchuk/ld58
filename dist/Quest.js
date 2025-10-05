@@ -107,7 +107,8 @@ var Quest = /** @class */ (function () {
     };
     return Quest;
 }());
-function splitLines(ctx, text) {
+function splitLines(ctx, text, maxWidth) {
+    if (maxWidth === void 0) { maxWidth = 470; }
     var lines = [];
     ctx.font = "20px Courier New";
     ctx.fillStyle = "black";
@@ -116,7 +117,7 @@ function splitLines(ctx, text) {
     for (var _i = 0, words_1 = words; _i < words_1.length; _i++) {
         var word = words_1[_i];
         var width = ctx.measureText(currentLine + " " + word).width;
-        if (width > 470) {
+        if (width > maxWidth) {
             lines.push(currentLine);
             currentLine = word;
         }
@@ -135,13 +136,20 @@ var quests = [
         "red_flower": 0 //3
     }, function (game) {
         game.hoeUnlocked = true;
+        game.player.addToInventory("yellow_flower_seeds", 3);
     }, [
         {
             asset: "action_till",
             name: "Hoe Unlocked"
+        },
+        {
+            asset: "yellow_seeds",
+            name: "3 x Sunspire Seeds"
         }
     ]),
-    new Quest("Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.", "Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!", {}, function (game) {
+    new Quest("Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.", "Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!", {
+        "yellow_flower": 1
+    }, function (game) {
         game.bookUnlocked = true;
     }, [
         {

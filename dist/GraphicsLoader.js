@@ -35,6 +35,11 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["action_box"] = this.loadImage("assets/action_box.png");
         this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
         this.assets["action_till"] = this.loadImage("assets/action_till.png");
+        this.assets["encyclopedia"] = this.loadImage("assets/encyclopedia.png");
+        this.assets["left-off"] = this.loadImage("assets/left-off.png");
+        this.assets["left-on"] = this.loadImage("assets/left-on.png");
+        this.assets["right-off"] = this.loadImage("assets/right-off.png");
+        this.assets["right-on"] = this.loadImage("assets/right-on.png");
         for (var d = 0; d < 8; d++) {
             this.player.push([]);
             for (var f = 0; f < 4; f++) {
