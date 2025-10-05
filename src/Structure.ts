@@ -16,7 +16,7 @@ abstract class Structure extends Entity {
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
 		const asset = this.assets[this.frame];
 
-		const { x, y } = Tile.renderPos(game, this.x - 0.5, this.y + 2);
+		const { x, y } = Tile.renderPos(game, this.x, this.y + 3);
 		const Tw = game.TILE_WIDTH * game.TILE_SCALE, Th = game.TILE_HEIGHT * game.TILE_SCALE;
 		const imgScale = (this.width * Tw) / asset.width;
 		const eachSide = (asset.width * imgScale - this.width * Tw) / 2;
@@ -24,8 +24,8 @@ abstract class Structure extends Entity {
 		ctx.drawImage(
 			asset,
 			x - eachSide - Tw / 2, y - asset.width * imgScale / 2 + Th / 2,
-			this.width * Tw,
-			this.height * Tw
+			this.width * Tw * 0.9,
+			this.height * Tw * 0.9
 		);
 
 		if (game.frame % this.animSpeed === 0) {
@@ -36,7 +36,7 @@ abstract class Structure extends Entity {
 
 class House extends Structure {
 	constructor(game: Game, x: number, y: number) {
-		super(x, y, 4, 4, [ game.asset("house"), game.asset("house2"), game.asset("house3") ], 60);
+		super(x, y, 5, 5, [ game.asset("house"), game.asset("house2"), game.asset("house3") ], 60);
 	}
 
 	public update(game: Game, delta: number): boolean { return false };

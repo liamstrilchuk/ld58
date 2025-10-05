@@ -62,7 +62,7 @@ class Action {
 			this.tile.changeType(game, "grass");
 		}
 
-		if (["flower", "grass"].includes(this.tile.type) && this.action === "till") {
+		if (["flower", "grass", "red_flower", "sand"].includes(this.tile.type) && this.action === "till") {
 			this.tile.changeType(game, "tilled");
 		}
 	}

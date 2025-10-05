@@ -40,7 +40,7 @@ var Action = /** @class */ (function () {
             this.addItem(game, "red_flower_seeds", 0.9);
             this.tile.changeType(game, "grass");
         }
-        if (["flower", "grass"].includes(this.tile.type) && this.action === "till") {
+        if (["flower", "grass", "red_flower", "sand"].includes(this.tile.type) && this.action === "till") {
             this.tile.changeType(game, "tilled");
         }
     };

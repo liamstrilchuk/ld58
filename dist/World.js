@@ -1,6 +1,6 @@
 var World = /** @class */ (function () {
     function World(game) {
-        this.WORLD_SIZE = 20;
+        this.WORLD_SIZE = 50;
         this.grid = [];
         this.hoveredTile = null;
         this.selectedTile = null;
@@ -31,6 +31,7 @@ var World = /** @class */ (function () {
     };
     World.prototype.generateWorld = function (game) {
         noise.seed(Math.random());
+        this.structures.push(new House(game, Math.floor(this.WORLD_SIZE / 2) - 2, Math.floor(this.WORLD_SIZE / 2) - 2));
         for (var x = 0; x < this.WORLD_SIZE; x++) {
             this.grid.push([]);
             for (var y = 0; y < this.WORLD_SIZE; y++) {
@@ -38,20 +39,21 @@ var World = /** @class */ (function () {
                 this.grid[this.grid.length - 1].push(new Tile(game, x, y, type));
             }
         }
-        this.structures.push(new House(game, Math.floor(this.WORLD_SIZE / 2), Math.floor(this.WORLD_SIZE / 2)));
         game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT;
     };
     World.prototype.determineTileType = function (x, y) {
-        var val = Math.abs(noise.perlin2(x / 50, y / 50));
-        var val2 = Math.abs(noise.perlin2(x / 100 + 123, y / 100 + 123));
-        var combined = (val + val2) / 2;
-        if (combined < 0.1) {
+        var val = Math.abs(noise.perlin2(x / 30, y / 30));
+        var val2 = Math.abs(noise.perlin2(x / 50 + 123, y / 50 + 123));
+        var dist = Math.hypot(x - this.structures[0].x, y - this.structures[0].y);
+        var combined = val * 0.6 + val2 * 0.4
+            + Math.pow(Math.max(0, 15 - dist), 0.5) / 20;
+        if (combined < 0.15) {
             if (Math.random() < 0.05) {
                 return "water_flower";
             }
             return "water";
         }
-        else if (combined < 0.12) {
+        else if (combined < 0.18) {
             return "sand";
         }
         else {

@@ -114,6 +114,16 @@ var Game = /** @class */ (function () {
         }
         return null;
     };
+    Game.prototype.structureAtTile = function (tile) {
+        for (var _i = 0, _a = this.world.structures; _i < _a.length; _i++) {
+            var struct = _a[_i];
+            if (tile.x >= struct.x && tile.x < struct.x + struct.width &&
+                tile.y >= struct.y && tile.y < struct.y + struct.height) {
+                return true;
+            }
+        }
+        return false;
+    };
     Game.prototype.calculateHoveredTile = function () {
         if (this.findHoveredButton()) {
             this.world.hoveredTile = null;
@@ -170,7 +180,9 @@ var Game = /** @class */ (function () {
             this.world.selectedTile = null;
             return;
         }
-        this.world.selectedTile = this.world.hoveredTile;
+        if (this.world.hoveredTile && !this.structureAtTile(this.world.hoveredTile)) {
+            this.world.selectedTile = this.world.hoveredTile;
+        }
     };
     Game.prototype.onMouseUp = function () {
         this.mouseDown = false;

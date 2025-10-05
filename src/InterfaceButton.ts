@@ -20,6 +20,9 @@ class InterfaceButton {
 				case "till":
 					this.asset = game.asset("action_till");
 					break;
+				case "plant":
+					this.asset = game.asset("action_harvest");
+					break;
 			}
 		}
 

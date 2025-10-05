@@ -1,9 +1,9 @@
 class World {
-	public WORLD_SIZE = 20;
+	public WORLD_SIZE = 50;
 	public grid: Tile[][] = [];
 	public hoveredTile: Tile = null;
 	public selectedTile: Tile = null;
-	private structures: Structure[] = [];
+	public structures: Structure[] = [];
 
 	constructor(game: Game) {
 		this.generateWorld(game);
@@ -36,6 +36,10 @@ class World {
 
 	private generateWorld(game: Game) {
 		(noise as any).seed(Math.random());
+
+		this.structures.push(
+			new House(game, Math.floor(this.WORLD_SIZE / 2) - 2, Math.floor(this.WORLD_SIZE / 2) - 2)
+		);
 		
 		for (let x = 0; x < this.WORLD_SIZE; x++) {
 			this.grid.push([]);
@@ -49,25 +53,23 @@ class World {
 			}
 		}
 
-		this.structures.push(
-			new House(game, Math.floor(this.WORLD_SIZE / 2), Math.floor(this.WORLD_SIZE / 2))
-		);
-
 		game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT;
 	}
 
 	private determineTileType(x: number, y: number) {
-		const val = Math.abs((noise as any).perlin2(x / 50, y / 50));
-		const val2 = Math.abs((noise as any).perlin2(x / 100 + 123, y / 100 + 123));
-		const combined = (val + val2) / 2;
+		const val = Math.abs((noise as any).perlin2(x / 30, y / 30));
+		const val2 = Math.abs((noise as any).perlin2(x / 50 + 123, y / 50 + 123));
+		const dist = Math.hypot(x - this.structures[0].x, y - this.structures[0].y);
+		const combined = val * 0.6 + val2 * 0.4
+			+ Math.pow(Math.max(0, 15 - dist), 0.5) / 20;
 
-		if (combined < 0.1) {
+		if (combined < 0.15) {
 			if (Math.random() < 0.05) {
 				return "water_flower";
 			}
 
 			return "water";
-		} else if (combined < 0.12) {
+		} else if (combined < 0.18) {
 			return "sand";
 		} else {
 			if (Math.random() < 0.3) {

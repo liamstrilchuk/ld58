@@ -1,5 +1,5 @@
 class Player extends Entity {
-	private speed: number = 3;
+	private speed: number = 3.5;
 	private walkFrame: number = 0;
 	private walkDir: number = 0;
 	public inventory: { [key: string]: number } = {};
@@ -50,11 +50,13 @@ class Player extends Entity {
 		let newX = Math.cos(dir) * speed * delta;
 		let newY = Math.sin(dir) * speed * delta;
 
-		if (game.getTileAtPos(game.ctx.canvas.width / 2 + newX, game.ctx.canvas.height / 2)) {
+		const xTile = game.getTileAtPos(game.ctx.canvas.width / 2 + newX, game.ctx.canvas.height / 2);
+		if (xTile && !game.structureAtTile(xTile)) {
 			this.x += newX;
 		}
 
-		if (game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + newY)) {
+		const yTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + newY);
+		if (yTile && !game.structureAtTile(yTile)) {
 			this.y += newY;
 		}
 
@@ -68,6 +70,19 @@ class Player extends Entity {
 			game.renderX(this.x) - 60, game.renderY(this.y) - 60 * (asset.height / asset.width),
 			120, 120 * (asset.height / asset.width)
 		);
+
+		const tile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
+		const dist = Math.hypot(tile.x - game.world.structures[0].x - 2, tile.y - game.world.structures[0].y - 3);
+
+		if (dist < 3) {
+			ctx.fillStyle = "white";
+			ctx.font = "bold 30px Courier New";
+			ctx.textAlign = "center";
+			ctx.fillText("Press Q to talk", game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + 100);
+			ctx.strokeStyle = "black";
+			ctx.strokeText("Press Q to talk", game.ctx.canvas.width / 2, game.ctx.canvas.height / 2 + 100);
+			ctx.textAlign = "left";
+		}
 	}
 
 	public addToInventory(name: string, amount: number) {

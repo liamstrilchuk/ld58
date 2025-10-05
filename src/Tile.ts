@@ -162,6 +162,7 @@ class Tile {
 
 		switch (type) {
 			case "grass":
+			case "sand":
 				options.push("till");
 				break;
 			case "flower":
@@ -171,9 +172,9 @@ class Tile {
 				options.push("harvest");
 				break;
 			case "red_flower":
-				options.push("harvest");
+				options.push("harvest", "till");
 				break;
-			case "tilled_tile":
+			case "tilled":
 				options.push("plant");
 				break;
 		}

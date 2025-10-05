@@ -16,7 +16,7 @@ class Game {
 	public TILE_SCALE = 6;
 
 	public frame = 0;
-	private world = new World(this);
+	public world = new World(this);
 
 	public hoeUnlocked = false;
 	public bookUnlocked = true;
@@ -158,6 +158,17 @@ class Game {
 		return null;
 	}
 
+	public structureAtTile(tile: Tile): boolean {
+		for (const struct of this.world.structures) {
+			if (tile.x >= struct.x && tile.x < struct.x + struct.width &&
+				tile.y >= struct.y && tile.y < struct.y + struct.height) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private calculateHoveredTile() {
 		if (this.findHoveredButton()) {
 			this.world.hoveredTile = null;
@@ -230,7 +241,9 @@ class Game {
 			return;
 		}
 
-		this.world.selectedTile = this.world.hoveredTile;
+		if (this.world.hoveredTile && !this.structureAtTile(this.world.hoveredTile)) {
+			this.world.selectedTile = this.world.hoveredTile;
+		}
 	}
 
 	public onMouseUp() {
