@@ -277,7 +277,7 @@ const quests = [
 		]
 	),
 	new Quest(
-		"Why don't you try out your new tool and farm some crops? Remember, the Sunspire needs to be grown next to water. Once you're done, I have a surprise for you.",
+		"Why don't you try out your new tool and farm some crops? Remember, the Sunspire needs to be grown within two tiles of water. Once you're done, I have a surprise for you.",
 		"Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!",
 		"expression-default",
 		"expression-wink",
@@ -332,7 +332,7 @@ const quests = [
 		]
 	),
 	new Quest(
-		"The Emberfruit is a tricky plant to grow, because it needs to be grown next to another plant. They're also extremely tasty! Remember, \"next\" or \"adjacent\" only means the four tiles sharing a side, not diagonals!",
+		"The Emberfruit is a tricky plant to grow, because it needs to be grown next three other plants. They're also extremely tasty! Remember, \"next\" or \"adjacent\" only means the four tiles sharing a side, not diagonals!",
 		"Thanks for the snack! (nom nom) Now that you've mastered the basics, here's something a bit more complicated.",
 		"expression-default",
 		"expression-tongue",
