@@ -78,6 +78,9 @@ var Tile = /** @class */ (function () {
             case "lavender_flower_tilled":
                 this.image = game.asset("lavender-stage".concat(this.stage));
                 break;
+            case "mushroom_flower_tilled":
+                this.image = game.asset("mushroom-stage".concat(this.stage));
+                break;
             default:
                 this.image = game.asset("blank_tile");
                 break;
@@ -95,7 +98,7 @@ var Tile = /** @class */ (function () {
         var checkGrowing = function (type, list) { return list
             .filter(function (tile) { return tile.type === type; })
             .filter(function (tile) { return checkingFrom.includes(tile) || tile.canGrow(game, __spreadArray(__spreadArray([], checkingFrom, true), [_this], false)); })
-            .length > 0; };
+            .length; };
         switch (this.type) {
             case "white_flower_tilled":
             case "red_flower_tilled":
@@ -103,7 +106,7 @@ var Tile = /** @class */ (function () {
             case "yellow_flower_tilled":
                 return twoAway.map(function (tile) { return tile.type; }).includes("water");
             case "purple_flower_tilled":
-                var hasRedFlower = allTiles.includes("red_flower") || checkGrowing("red_flower_tilled", adjacent);
+                var hasRedFlower = allTiles.includes("red_flower") || checkGrowing("red_flower_tilled", adjacent) > 0;
                 return hasRedFlower && allTiles.includes("water");
             case "berries_flower_tilled":
                 var growing = adjacent.filter(function (tile) {
@@ -111,12 +114,14 @@ var Tile = /** @class */ (function () {
                 }).map(function (tile) { return tile.type; });
                 return (new Set(growing)).size >= 3;
             case "blue_flower_tilled":
-                return checkGrowing("purple_flower_tilled", adjacent) && checkGrowing("berries_flower_tilled", adjacent);
+                return checkGrowing("purple_flower_tilled", adjacent) > 0 && checkGrowing("berries_flower_tilled", adjacent) > 0;
             case "lavender_flower_tilled":
-                return checkGrowing("blue_flower_tilled", twoAway) && checkGrowing("yellow_flower_tilled", adjacent);
+                return checkGrowing("blue_flower_tilled", twoAway) > 0 && checkGrowing("yellow_flower_tilled", adjacent) > 0;
             case "orange_flower_tilled":
-                return adjacent.filter(function (tile) { return Tile.plantNames[tile.type]; }).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway)
-                    && checkGrowing("berries_flower_tilled", adjacent) && checkGrowing("yellow_flower_tilled", adjacent);
+                return adjacent.filter(function (tile) { return Tile.plantNames[tile.type]; }).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway) > 0
+                    && checkGrowing("berries_flower_tilled", adjacent) > 0 && checkGrowing("yellow_flower_tilled", adjacent) > 0;
+            case "mushroom_flower_tilled":
+                return checkGrowing("orange_flower_tilled", twoAway) >= 2;
         }
         return false;
     };
@@ -251,6 +256,7 @@ var Tile = /** @class */ (function () {
             case "orange_flower_tilled":
             case "blue_flower_tilled":
             case "lavender_flower_tilled":
+            case "mushroom_flower_tilled":
                 if (stage >= 2) {
                     options.push("harvest");
                 }
@@ -275,7 +281,8 @@ var Tile = /** @class */ (function () {
         "berries_flower_tilled": 1 / 500,
         "orange_flower_tilled": 1 / 800,
         "blue_flower_tilled": 1 / 600,
-        "lavender_flower_tilled": 1 / 500
+        "lavender_flower_tilled": 1 / 500,
+        "mushroom_flower_tilled": 1 / 800
     };
     Tile.plantNames = {
         "white_flower_tilled": "Sunpetal",
@@ -285,7 +292,8 @@ var Tile = /** @class */ (function () {
         "berries_flower_tilled": "Emberfruit",
         "blue_flower_tilled": "Azurebell",
         "orange_flower_tilled": "Maravine",
-        "lavender_flower_tilled": "Hushbloom"
+        "lavender_flower_tilled": "Hushbloom",
+        "mushroom_flower_tilled": "Starlume"
     };
     return Tile;
 }());

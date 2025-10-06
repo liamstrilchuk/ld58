@@ -97,6 +97,15 @@ class Item extends Entity {
 			"asset": "orange_flower_icon",
 			"name": "Maravine",
 			"can_plant": false
+		},
+		"mushroom_flower_seeds": {
+			"asset": "mushroom_seeds",
+			"name": "Starlume Seeds",
+			"can_plant": true
+		},
+		"mushroom_flower": {
+			"asset": "mushroom_flower_icon",
+			"name": "Starlume"
 		}
 	};
 	public item: string;

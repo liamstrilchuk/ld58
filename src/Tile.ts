@@ -16,7 +16,8 @@ class Tile {
 		"berries_flower_tilled": 1/500,
 		"orange_flower_tilled": 1/800,
 		"blue_flower_tilled": 1/600,
-		"lavender_flower_tilled": 1/500
+		"lavender_flower_tilled": 1/500,
+		"mushroom_flower_tilled": 1/800
 	};
 
 	private static plantNames = {
@@ -27,7 +28,8 @@ class Tile {
 		"berries_flower_tilled": "Emberfruit",
 		"blue_flower_tilled": "Azurebell",
 		"orange_flower_tilled": "Maravine",
-		"lavender_flower_tilled": "Hushbloom"
+		"lavender_flower_tilled": "Hushbloom",
+		"mushroom_flower_tilled": "Starlume"
 	};
 
 	constructor(game: Game, x: number, y: number, type: string) {
@@ -101,6 +103,9 @@ class Tile {
 			case "lavender_flower_tilled":
 				this.image = game.asset(`lavender-stage${this.stage}`);
 				break;
+			case "mushroom_flower_tilled":
+				this.image = game.asset(`mushroom-stage${this.stage}`);
+				break;
 			default:
 				this.image = game.asset("blank_tile");
 				break;
@@ -119,7 +124,7 @@ class Tile {
 		const checkGrowing = (type: string, list: Tile[]) => list
 			.filter(tile => tile.type === type)
 			.filter(tile => checkingFrom.includes(tile) || tile.canGrow(game, [...checkingFrom, this]))
-			.length > 0;
+			.length;
 
 		switch (this.type) {
 			case "white_flower_tilled":
@@ -128,7 +133,7 @@ class Tile {
 			case "yellow_flower_tilled":
 				return twoAway.map(tile => tile.type).includes("water");
 			case "purple_flower_tilled":
-				let hasRedFlower = allTiles.includes("red_flower") || checkGrowing("red_flower_tilled", adjacent);
+				let hasRedFlower = allTiles.includes("red_flower") || checkGrowing("red_flower_tilled", adjacent) > 0;
 				return hasRedFlower && allTiles.includes("water");
 			case "berries_flower_tilled":
 				const growing = adjacent.filter(tile =>
@@ -136,12 +141,14 @@ class Tile {
 				).map(tile => tile.type);
 				return (new Set(growing)).size >= 3;
 			case "blue_flower_tilled":
-				return checkGrowing("purple_flower_tilled", adjacent) && checkGrowing("berries_flower_tilled", adjacent);
+				return checkGrowing("purple_flower_tilled", adjacent) > 0 && checkGrowing("berries_flower_tilled", adjacent) > 0;
 			case "lavender_flower_tilled":
-				return checkGrowing("blue_flower_tilled", twoAway) && checkGrowing("yellow_flower_tilled", adjacent);
+				return checkGrowing("blue_flower_tilled", twoAway) > 0 && checkGrowing("yellow_flower_tilled", adjacent) > 0;
 			case "orange_flower_tilled":
-				return adjacent.filter(tile => Tile.plantNames[tile.type]).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway)
-					&& checkGrowing("berries_flower_tilled", adjacent) && checkGrowing("yellow_flower_tilled", adjacent);
+				return adjacent.filter(tile => Tile.plantNames[tile.type]).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway) > 0
+					&& checkGrowing("berries_flower_tilled", adjacent) > 0 && checkGrowing("yellow_flower_tilled", adjacent) > 0;
+			case "mushroom_flower_tilled":
+				return checkGrowing("orange_flower_tilled", twoAway) >= 2;
 		}
 
 		return false;
@@ -306,6 +313,7 @@ class Tile {
 			case "orange_flower_tilled":
 			case "blue_flower_tilled":
 			case "lavender_flower_tilled":
+			case "mushroom_flower_tilled":
 				if (stage >= 2) {
 					options.push("harvest");
 				}

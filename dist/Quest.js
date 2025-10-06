@@ -257,7 +257,7 @@ var quests = [
             name: "Encyclopedia Entry Unlocked"
         }
     ]),
-    new Quest("The Hushbloom smells different to each person, and its fragrance can calm even the most stressed mind.", "<inhales> oh, smells like spring! I've taught you everything I know, but here's a final challenge for you.", "expression-default", "expression-smile", {
+    new Quest("The Hushbloom smells different to each person, and its fragrance can calm even the most stressed mind.", "<inhales> oh, smells like spring! Since you've impressed me with your gardening skills so far, let's see if you can grow this one.", "expression-default", "expression-smile", {
         "lavender_flower": 1
     }, function (game) {
         game.player.addToInventory("orange_flower_seeds", 3);
@@ -272,7 +272,22 @@ var quests = [
             name: "Encyclopedia Entry Unlocked"
         }
     ]),
-    new Quest("The maravine is the most complex plant to exist. I've never been able to make one, despite years of trying. Just for fun, let's see if you can do it!", "You... did it? Well, I suppose the student has become the master. Feel free to explore around some more!", "expression-wink", "expression-smile", {
+    new Quest("The Maravine is unique in that it needs plenty of open space to grow; too crowded and it refuses!", "I've taught you everything I know, but here's a final challenge for you.", "expression-default", "expression-smile", {
         "orange_flower": 1
+    }, function (game) {
+        game.player.addToInventory("mushroom_flower_seeds", 3);
+        game.encyclopedia.addEntry(new EncyclopediaEntry("Starlume", "Amanita astralis", "Considered the magnum opus of gardening, the Starlume has only been grown a handful of times before. While there is little information on the species, an old scientific journal explains how to grow it: it must be within two tiles of two Maravines.", "mushroom_flower"));
+    }, function (game) { }, [
+        {
+            asset: "mushroom_seeds",
+            name: "3 x Starlume Seeds"
+        },
+        {
+            asset: "encyclopedia_icon",
+            name: "Encyclopedia Entry Unlocked"
+        }
+    ]),
+    new Quest("The Starlume is the most complex plant to exist. I've never been able to make one, despite years of trying. Just for fun, let's see if you can do it!", "You... did it? Well, I suppose the student has become the master. Feel free to explore around some more!", "expression-wink", "expression-smile", {
+        "mushroom_flower": 1
     }, function (game) { }, function (game) { }, [])
 ];

@@ -29,6 +29,7 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["blue_flower_icon"] = this.loadImage("assets/flowers/blue_flower_icon.png");
         this.assets["orange_flower_icon"] = this.loadImage("assets/flowers/orange_flower_icon.png");
         this.assets["lavender_flower_icon"] = this.loadImage("assets/flowers/lavender_flower_icon.png");
+        this.assets["mushroom_flower_icon"] = this.loadImage("assets/flowers/mushroom_flower_icon.png");
         this.assets["white_flower_seeds"] = this.loadImage("assets/seeds/white_flower_seeds.png");
         this.assets["red_flower_seeds"] = this.loadImage("assets/seeds/red_flower_seeds.png");
         this.assets["purple_seeds"] = this.loadImage("assets/seeds/purple_seeds.png");
@@ -37,6 +38,7 @@ var GraphicsLoader = /** @class */ (function () {
         this.assets["orange_seeds"] = this.loadImage("assets/seeds/orange_seeds.png");
         this.assets["blue_seeds"] = this.loadImage("assets/seeds/blue_seeds.png");
         this.assets["lavender_seeds"] = this.loadImage("assets/seeds/lavender_seeds.png");
+        this.assets["mushroom_seeds"] = this.loadImage("assets/seeds/mushroom_seeds.png");
         this.assets["inventory_item"] = this.loadImage("assets/inventory_item.png");
         this.assets["action_box"] = this.loadImage("assets/action_box.png");
         this.assets["action_harvest"] = this.loadImage("assets/action_harvest.png");
@@ -68,7 +70,7 @@ var GraphicsLoader = /** @class */ (function () {
                 this.player[this.player.length - 1].push(this.loadImage("assets/player_anim/D".concat(d, "-F").concat(f, ".png")));
             }
         }
-        var planted = ["purple", "red", "berries", "white", "yellow", "orange", "blue", "lavender"];
+        var planted = ["purple", "red", "berries", "white", "yellow", "orange", "blue", "lavender", "mushroom"];
         for (var _i = 0, planted_1 = planted; _i < planted_1.length; _i++) {
             var plant = planted_1[_i];
             for (var i = 0; i < 3; i++) {

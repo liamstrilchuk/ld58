@@ -86,6 +86,9 @@ class Action {
 				case "lavender_flower_tilled":
 					this.harvest(game, [ "lavender_flower_seeds" ], "tilled");
 					break;
+				case "mushroom_flower_tilled":
+					this.harvest(game, [ "mushroom_flower_seeds" ], "tilled");
+					break;
 			}
 
 			this.tile.stage = 0;
@@ -127,6 +130,9 @@ class Action {
 				case "lavender_flower_tilled":
 					this.harvest(game, [ "lavender_flower", "lavender_flower_seeds", "lavender_flower_seeds" ], "tilled");
 					break;
+				case "mushroom_flower_tilled":
+					this.harvest(game, [ "mushroom_flower", "mushroom_flower_seeds", "mushroom_flower_seeds" ], "tilled");
+					break;
 			}
 
 			this.tile.stage = 0;
@@ -163,6 +169,9 @@ class Action {
 					break;
 				case "lavender_flower_seeds":
 					this.tile.changeType(game, "lavender_flower_tilled");
+					break;
+				case "mushroom_flower_seeds":
+					this.tile.changeType(game, "mushroom_flower_tilled");
 					break;
 			}
 			game.playAudio("plant");
