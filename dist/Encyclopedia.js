@@ -4,10 +4,10 @@ var Encyclopedia = /** @class */ (function () {
         this.currentPage = 0;
         this.entries = [
             new EncyclopediaEntry("Sunpetal", "Solnaria alba", "A common flower.", "flower"),
-            new EncyclopediaEntry("Emberbloom", "Velutina ardens", "A common flower.", "red_flower"),
+            new EncyclopediaEntry("Emberbloom", "Velutina ardens", "A rugged plant, which can be grown almost anywhere.", "red_flower"),
             new EncyclopediaEntry("Tidebloom", "Nymphaea lunaris", "A common flower. Found in aquatic environments.", "water_flower"),
-            new EncyclopediaEntry("Sunspire", "Heliora aurelia", "A rugged plant, which can be grown almost anywhere. Has been described as tasting like lemons.", "yellow_flower"),
-            new EncyclopediaEntry("Dreamveil", "Nymphaea violacea", "A distant relative of the Tidebloom. Must be grown adjacent to water. Said to treat many kinds of ailments, though this has not been proven.", "purple_flower")
+            new EncyclopediaEntry("Sunspire", "Heliora aurelia", "Has been described as tasting like lemons. Must be grown within two tiles of water.", "yellow_flower"),
+            new EncyclopediaEntry("Dreamveil", "Nymphaea violacea", "A distant relative of the Tidebloom. Must be grown adjacent to water, and an Emberbloom. Said to treat many kinds of ailments, though this has not been proven.", "purple_flower")
         ];
     }
     Encyclopedia.prototype.addEntry = function (entry) {

@@ -72,8 +72,10 @@ var Player = /** @class */ (function (_super) {
         ctx.drawImage(asset, game.renderX(this.x) - 60, game.renderY(this.y) - 60 * (asset.height / asset.width), 120, 120 * (asset.height / asset.width));
         var tile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
         var dist = Math.hypot(tile.x - game.world.structures[0].x - 2, tile.y - game.world.structures[0].y - 3);
+        game.canOpenQuest = false;
         if (dist < 3 && !game.questSelected && !game.encyclopediaSelected) {
             game.infoText = "Press Q to talk";
+            game.canOpenQuest = true;
         }
     };
     Player.prototype.addToInventory = function (name, amount) {

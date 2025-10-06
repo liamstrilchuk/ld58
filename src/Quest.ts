@@ -2,12 +2,12 @@ class Quest {
 	private text: string;
 	private completedText: string;
 	private lines: string[] = [];
-	private finishedRendering = false;
+	public finishedRendering = false;
 	private charactersDone = 0;
 	private itemsNeeded: { [key: string]: number };
 	private onStart: (game: Game) => void;
 	private onComplete: (game: Game) => void;
-	private complete = false;
+	public complete = false;
 	private button: { x: number, y: number, w: number, h: number } = null;
 	private itemsGotten: { asset: string, name: string }[];
 	private startFuncRun = false;
@@ -44,12 +44,27 @@ class Quest {
 			}
 		}
 
-		const left = ctx.canvas.width / 2 - 250, top = ctx.canvas.height / 2 - 400;
+		const asset = game.asset("quest_box");
+		const left = ctx.canvas.width / 2 - 380, top = ctx.canvas.height - 800 * asset.height / asset.width + 20;
 		ctx.fillStyle = "white";
 		ctx.fillRect(left, top, 500, 800);
 
+		const ratio = 800 / asset.width;
+		ctx.drawImage(
+			asset,
+			left - 20, top - 20,
+			800, 800 * asset.height / asset.width
+		);
+
+		const expression = game.asset("expression1");
+		ctx.drawImage(
+			expression,
+			ctx.canvas.width / 2 + 125, ctx.canvas.height - ratio * expression.height + 50,
+			ratio * expression.width, ratio * expression.height
+		);
+
 		ctx.font = "20px Courier New";
-		ctx.fillStyle = "black";
+		ctx.fillStyle = "white";
 		let charsDrawn = 0;
 		
 		for (let i = 0; i < this.lines.length; i++) {
@@ -58,8 +73,7 @@ class Quest {
 			ctx.fillText(
 				line.substring(0, charsToDraw),
 				left + 15,
-				top + 30 + i * 25,
-				470
+				top + 30 + i * 25
 			);
 
 			charsDrawn += charsToDraw;
@@ -69,62 +83,38 @@ class Quest {
 		}
 
 		ctx.font = "bold 25px Courier New";
-		let currentY = top + 40 + this.lines.length * 25;
+		const currentY = top + 20 + this.lines.length * 25;
+		let currentX = left + 5;
 
 		if (this.finishedRendering && !this.complete) {
-			let allAcquired = true;
-
-			for (const need in this.itemsNeeded) {
-				if ((game.player.inventory[need] || 0) < this.itemsNeeded[need]) {
-					allAcquired = false;
-				}
-				ctx.fillStyle = (game.player.inventory[need] || 0) >= this.itemsNeeded[need] ? "black" : "red";
-				ctx.drawImage(
-					game.asset(Item.itemData[need].asset),
-					left + 15, currentY,
-					60, 60
-				);
-				ctx.fillText(
-					`${game.player.inventory[need] || 0}/${this.itemsNeeded[need]}`,
-					left + 70, currentY + 35
-				);
-				currentY += 60;
-			}
+			const allAcquired = this.drawRequirements(game, ctx, currentX, currentY);
 
 			if (allAcquired) {
-				ctx.fillStyle = "#ddd";
-				ctx.fillRect(left + 20, currentY + 10, 140, 50);
-
-				ctx.font = "18px Courier New";
-				ctx.fillStyle = "black";
-				ctx.fillText("Give Items", left + 35, currentY + 40);
+				ctx.font = "20px Courier New";
+				ctx.fillText("Press enter to continue...", left + 15, currentY + 85);
 				this.button = {
-					x: left + 20, y: currentY + 10,
+					x: left, y: currentY + 70,
 					w: 140, h: 50
 				};
 			}
 		} else if (this.finishedRendering) {
 			for (const item of this.itemsGotten) {
-				ctx.fillStyle = "black";
-				ctx.font = "20px Courier New";
+				ctx.fillStyle = "white";
+				ctx.font = "17px Courier New";
 				ctx.drawImage(
 					game.asset(item.asset),
-					left + 15, currentY,
+					currentX, currentY,
 					60, 60
 				);
 				ctx.fillText(
 					item.name,
-					left + 85, currentY + 35
+					currentX + 65, currentY + 35
 				);
-				currentY += 60;
+				currentX += 70 + ctx.measureText(item.name).width;
 			}
 
-			ctx.fillStyle = "#ddd";
-			ctx.fillRect(left + 20, currentY + 10, 140, 50);
-
-			ctx.font = "18px Courier New";
-			ctx.fillStyle = "black";
-			ctx.fillText("Next Quest", left + 35, currentY + 40);
+			ctx.font = "20px Courier New";
+			ctx.fillText("Press enter to continue...", left + 15, currentY + 85);
 			this.button = {
 				x: left + 20, y: currentY + 10,
 				w: 140, h: 50
@@ -132,9 +122,80 @@ class Quest {
 		}
 	}
 
+	public drawRequirements(game: Game, ctx: CanvasRenderingContext2D, x: number, y: number, outline=false): boolean {
+		ctx.font = "bold 25px Courier New";
+		let allAcquired = true;
+
+		for (const need in this.itemsNeeded) {
+			if ((game.player.inventory[need] || 0) < this.itemsNeeded[need]) {
+				allAcquired = false;
+			}
+			ctx.fillStyle = (game.player.inventory[need] || 0) >= this.itemsNeeded[need] ? "white" : (outline ? "red" : "#e38f8f");
+			ctx.drawImage(
+				game.asset(Item.itemData[need].asset),
+				x, y,
+				60, 60
+			);
+
+			ctx.fillText(
+				`${game.player.inventory[need] || 0}/${this.itemsNeeded[need]}`,
+				x + 60, y + 35
+			);
+			if (outline) {
+				ctx.strokeStyle = "white";
+				ctx.strokeText(
+					`${game.player.inventory[need] || 0}/${this.itemsNeeded[need]}`,
+					x + 60, y + 35
+				);
+			}
+			x += 125;
+		}
+
+		return allAcquired;
+	}
+
 	public getLines(ctx: CanvasRenderingContext2D, text?: string) {
 		text = text || this.text;
-		this.lines = splitLines(ctx, text);
+		this.lines = splitLines(ctx, text, 730);
+	}
+
+	public nextPressed(game: Game) {
+		if (!this.finishedRendering) {
+			if (!this.complete) {
+				this.charactersDone = this.text.length;
+			} else {
+				this.charactersDone = this.completedText.length;
+			}
+			this.finishedRendering = true;
+			return;
+		}
+
+		if (!this.complete) {
+			let hasAll = true;
+			for (const item in this.itemsNeeded) {
+				if ((game.player.inventory[item] || 0) < this.itemsNeeded[item] && !game.testingMode) {
+					hasAll = false;
+				}
+			}
+
+			if (!hasAll) {
+				game.questSelected = false;
+				return;
+			}
+
+			for (const item in this.itemsNeeded) {
+				game.player.inventory[item] -= this.itemsNeeded[item];
+			}
+
+			this.complete = true;
+			this.charactersDone = 0;
+			this.getLines(game.ctx, this.completedText);
+			this.finishedRendering = false;
+
+			this.onComplete(game);
+		} else {
+			game.currentQuest++;
+		}
 	}
 
 	public onMouseDown(game: Game, x: number, y: number) {
@@ -144,20 +205,7 @@ class Quest {
 
 		if (x >= this.button.x && x <= this.button.x + this.button.w &&
 			y >= this.button.y && y <= this.button.y + this.button.h) {
-			if (!this.complete) {
-				this.complete = true;
-				this.charactersDone = 0;
-				this.getLines(game.ctx, this.completedText);
-				this.finishedRendering = false;
-
-				for (const item in this.itemsNeeded) {
-					game.player.inventory[item] -= this.itemsNeeded[item];
-				}
-
-				this.onComplete(game);
-			} else {
-				game.currentQuest++;
-			}
+			this.nextPressed(game);
 		}
 	}
 }
@@ -191,9 +239,9 @@ const quests = [
 		"So, you wanted to learn a little something about farming, did you? Well, I can help with that. I've been farming for years. Tell you what, you bring me some flowers for my garden and I'll give you some tools to get you started.",
 		"Oh, thank you! As promised, here's a tool that'll help you get started farming in no time. Take some seeds as well. Once you've tried it out, come back here and I'll give you something else.",
 		{
-			"flower": 0,//5,
-			"water_flower": 0,//3,
-			"red_flower": 0//3
+			"flower": 5,
+			"water_flower": 3,
+			"red_flower": 3
 		},
 		(game: Game) => {
 			game.hoeUnlocked = true;
@@ -215,7 +263,7 @@ const quests = [
 		"Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.",
 		"Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!",
 		{
-			"yellow_flower": 0//1
+			"yellow_flower": 1
 		},
 		(game: Game) => {
 			game.bookUnlocked = true;
@@ -237,7 +285,7 @@ const quests = [
 		"Here are some more seeds to try growing. Let me know once you figure it out! Make sure to look in the encyclopedia to see what this plant needs to grow.",
 		"Wow, I'm impressed! Now, a new challenge for you...",
 		{
-			"purple_flower": 0//1
+			"purple_flower": 1
 		},
 		(game: Game) => {
 			game.player.addToInventory("berries_flower_seeds", 3);
@@ -245,7 +293,7 @@ const quests = [
 				new EncyclopediaEntry(
 					"Emberfruit",
 					"Fructa cordata",
-					"An extremely delicious fruit, but not for amateur botanists. The Emberfruit is very particular about where it is grown. It must be next to water, and have an Emberbloom growing adjacent to it.",
+					"An extremely delicious fruit, but not for amateur botanists. The Emberfruit is very particular about where it is grown. It must be next to at least three unique plants, each of which must be able to grow.",
 					"berries_flower"
 				)
 			);
@@ -264,12 +312,103 @@ const quests = [
 	),
 	new Quest(
 		"The Emberfruit is a tricky plant to grow, because it needs to be grown next to another plant. They're also extremely tasty!",
-		"Thanks for the snack! (nom nom)",
+		"Thanks for the snack! (nom nom) Now that you've mastered the basics, here's something a bit more complicated.",
 		{
-			"berries_flower": 0//1
+			"berries_flower": 1
+		},
+		(game: Game) => {
+			game.player.addToInventory("blue_flower_seeds", 3);
+			game.encyclopedia.addEntry(
+				new EncyclopediaEntry(
+					"Azurebell",
+					"Aetheria cerulea",
+					"Azurebells are challenging plants to grow, due to them being picky about their neighbours. They must be next to both a Dreamveil and an Emberfruit.",
+					"blue_flower"
+				)
+			);
 		},
 		(game: Game) => {},
+		[
+			{
+				asset: "blue_seeds",
+				name: "3 x Azurebell Seeds"
+			},
+			{
+				asset: "encyclopedia_icon",
+				name: "Encyclopedia Entry Unlocked"
+			}
+		]
+	),
+	new Quest(
+		"start",
+		"end",
+		{
+			"blue_flower": 1
+		},
+		(game: Game) => {
+			game.player.addToInventory("lavender_flower_seeds", 3);
+			game.encyclopedia.addEntry(
+				new EncyclopediaEntry(
+					"Hushbloom",
+					"Lavendula noctilis",
+					"The fragrance of a Hushbloom can immediately relieve stress of those nearby, but it is only for some of the most experienced botanists. It must grow adjacent to a Sunspire and within two tiles of an Azurebell.",
+					"lavender_flower"
+				)
+			);
+		},
 		(game: Game) => {},
-		[]
+		[
+			{
+				asset: "lavender_seeds",
+				name: "3 x Hushbloom Seeds"
+			},
+			{
+				asset: "encyclopedia_icon",
+				name: "Encyclopedia Entry Unlocked"
+			}
+		]
+	),
+	new Quest(
+		"start",
+		"end",
+		{
+			"lavender_flower": 1
+		},
+		(game: Game) => {
+			game.player.addToInventory("orange_flower_seeds", 3);
+			game.encyclopedia.addEntry(
+				new EncyclopediaEntry(
+					"Maravine",
+					"Aurora igniflora",
+					"The large, radiant petals of a Maravine need space to grow, but it also demands neighbors of its choice. It must grow next to an Emberfruit and a Sunspire, and within two tiles of a Hushbloom, but also must have two empty adjacent tiles.",
+					"orange_flower"
+				)
+			);
+		},
+		(game: Game) => {},
+		[
+			{
+				asset: "orange_seeds",
+				name: "3 x Maravine Seeds"
+			},
+			{
+				asset: "encyclopedia_icon",
+				name: "Encyclopedia Entry Unlocked"
+			}
+		]
+	),
+	new Quest(
+		"start",
+		"end",
+		{
+			"orange_flower": 1
+		},
+		(game: Game) => {
+
+		},
+		(game: Game) => {},
+		[
+
+		]
 	)
 ];

@@ -16,13 +16,15 @@ var Game = /** @class */ (function () {
         this.frame = 0;
         this.world = new World(this);
         this.hoeUnlocked = false;
-        this.bookUnlocked = true;
+        this.bookUnlocked = false;
         this.currentQuest = 0;
         this.questSelected = false;
         this.encyclopediaSelected = false;
         this.selectingSeeds = false;
         this.infoText = "";
         this.inventoryButtons = [];
+        this.canOpenQuest = false;
+        this.testingMode = false;
         this.ctx = ctx;
     }
     Game.prototype.addEntity = function (entity) {
@@ -116,6 +118,9 @@ var Game = /** @class */ (function () {
         if (this.infoText) {
             this.drawInfoText(this.infoText);
         }
+        if (!this.questSelected && quests[this.currentQuest].finishedRendering && !quests[this.currentQuest].complete) {
+            quests[this.currentQuest].drawRequirements(this, this.ctx, 10, 10, true);
+        }
     };
     Game.prototype.drawInfoText = function (text) {
         this.ctx.fillStyle = "white";
@@ -166,10 +171,15 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.onKeyDown = function (key) {
         if (key === "q") {
-            this.questSelected = !this.questSelected;
+            if (this.questSelected) {
+                this.questSelected = false;
+            }
+            else if (this.canOpenQuest) {
+                this.questSelected = true;
+            }
             this.encyclopediaSelected = false;
         }
-        if (key === "e") {
+        if (key === "e" && this.bookUnlocked) {
             this.encyclopediaSelected = !this.encyclopediaSelected;
             this.questSelected = false;
         }
@@ -177,6 +187,9 @@ var Game = /** @class */ (function () {
             this.encyclopediaSelected = false;
             this.questSelected = false;
             this.selectingSeeds = false;
+        }
+        if (key === "enter" && this.questSelected) {
+            quests[this.currentQuest].nextPressed(this);
         }
         if (key === "arrowleft" && this.encyclopediaSelected) {
             this.encyclopedia.prevItem();

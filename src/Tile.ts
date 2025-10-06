@@ -12,7 +12,10 @@ class Tile {
 		"red_flower_tilled": 1/600,
 		"purple_flower_tilled": 1/2000,
 		"yellow_flower_tilled": 1/1000,
-		"berries_flower_tilled": 1/1000
+		"berries_flower_tilled": 1/1000,
+		"orange_flower_tilled": 1/2000,
+		"blue_flower_tilled": 1/2000,
+		"lavender_flower_tilled": 1/2000
 	};
 
 	private static plantNames = {
@@ -20,7 +23,10 @@ class Tile {
 		"red_flower_tilled": "Emberbloom",
 		"purple_flower_tilled": "Dreamveil",
 		"yellow_flower_tilled": "Sunspire",
-		"berries_flower_tilled": "Emberfruit"
+		"berries_flower_tilled": "Emberfruit",
+		"blue_flower_tilled": "Azurebell",
+		"orange_flower_tilled": "Maravine",
+		"lavender_flower_tilled": "Hushbloom"
 	};
 
 	constructor(game: Game, x: number, y: number, type: string) {
@@ -85,35 +91,56 @@ class Tile {
 			case "berries_flower_tilled":
 				this.image = game.asset(`berries-stage${this.stage}`);
 				break;
+			case "orange_flower_tilled":
+				this.image = game.asset(`orange-stage${this.stage}`);
+				break;
+			case "blue_flower_tilled":
+				this.image = game.asset(`blue-stage${this.stage}`);
+				break;
+			case "lavender_flower_tilled":
+				this.image = game.asset(`lavender-stage${this.stage}`);
+				break;
 			default:
 				this.image = game.asset("blank_tile");
 				break;
 		}
 	}
 
-	public canGrow(game: Game): boolean {
+	public canGrow(game: Game, checkingFrom: Tile[]=[]): boolean {
 		if (!Tile.plantNames[this.type]) {
 			return false;
 		}
 
-		const adjacent = game.world.getAdjacentTiles(this);
+		const adjacent = game.world.getAdjacentTiles(this, 1);
 		const allTiles = adjacent.map(tile => tile.type);
+		const twoAway = game.world.getAdjacentTiles(this, 2);
+
+		const checkGrowing = (type: string, list: Tile[]) => list
+			.filter(tile => tile.type === type)
+			.filter(tile => checkingFrom.includes(tile) || tile.canGrow(game, [...checkingFrom, this]))
+			.length > 0;
 
 		switch (this.type) {
 			case "white_flower_tilled":
 			case "red_flower_tilled":
-			case "yellow_flower_tilled":
 				return true;
+			case "yellow_flower_tilled":
+				return twoAway.map(tile => tile.type).includes("water");
 			case "purple_flower_tilled":
-				return allTiles.includes("water");
-			case "berries_flower_tilled":
-				let hasRedFlower = allTiles.includes("red_flower");
-				for (const item of adjacent) {
-					if (item.type === "red_flower_tilled" && item.canGrow(game)) {
-						hasRedFlower = true;
-					}
-				}
+				let hasRedFlower = allTiles.includes("red_flower") || checkGrowing("red_flower_tilled", adjacent);
 				return hasRedFlower && allTiles.includes("water");
+			case "berries_flower_tilled":
+				const growing = adjacent.filter(tile =>
+					checkingFrom.includes(tile) || tile.canGrow(game, [...checkingFrom, this])
+				).map(tile => tile.type);
+				return (new Set(growing)).size >= 3;
+			case "blue_flower_tilled":
+				return checkGrowing("purple_flower_tilled", adjacent) && checkGrowing("berries_flower_tilled", adjacent);
+			case "lavender_flower_tilled":
+				return checkGrowing("blue_flower_tilled", twoAway) && checkGrowing("yellow_flower_tilled", adjacent);
+			case "orange_flower_tilled":
+				return adjacent.filter(tile => Tile.plantNames[tile.type]).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway)
+					&& checkGrowing("berries_flower_tilled", adjacent) && checkGrowing("yellow_flower_tilled", adjacent);
 		}
 
 		return false;
@@ -274,10 +301,15 @@ class Tile {
 			case "purple_flower_tilled":
 			case "yellow_flower_tilled":
 			case "berries_flower_tilled":
+			case "orange_flower_tilled":
+			case "blue_flower_tilled":
+			case "lavender_flower_tilled":
 				if (stage >= 2) {
 					options.push("harvest");
 				}
-				options.push("remove");
+				if (stage < 2) {
+					options.push("remove");
+				}
 				break;
 		}
 

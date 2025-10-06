@@ -75,13 +75,23 @@ var World = /** @class */ (function () {
             return "grass";
         }
     };
-    World.prototype.getAdjacentTiles = function (tile) {
+    World.prototype.getAdjacentTiles = function (tile, depth, prev) {
+        if (depth === void 0) { depth = 1; }
+        if (prev === void 0) { prev = []; }
+        if (depth === 0) {
+            return [tile];
+        }
         var positions = [[tile.x - 1, tile.y], [tile.x + 1, tile.y], [tile.x, tile.y - 1], [tile.x, tile.y + 1]];
         var list = [];
+        if (prev.length) {
+            list.push(tile);
+        }
+        prev.push(tile);
         for (var _i = 0, positions_1 = positions; _i < positions_1.length; _i++) {
             var pos = positions_1[_i];
-            if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE) {
-                list.push(this.grid[pos[0]][pos[1]]);
+            if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE &&
+                !prev.includes(this.grid[pos[0]][pos[1]])) {
+                list.push.apply(list, this.getAdjacentTiles(this.grid[pos[0]][pos[1]], depth - 1, prev));
             }
         }
         return list;

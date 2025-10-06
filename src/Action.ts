@@ -77,6 +77,15 @@ class Action {
 				case "berries_flower_tilled":
 					this.harvest(game, [ "berries_flower_seeds" ], "tilled");
 					break;
+				case "blue_flower_tilled":
+					this.harvest(game, [ "blue_flower_seeds" ], "tilled");
+					break;
+				case "orange_flower_tilled":
+					this.harvest(game, [ "orange_flower_seeds" ], "tilled");
+					break;
+				case "lavender_flower_tilled":
+					this.harvest(game, [ "lavender_flower_seeds" ], "tilled");
+					break;
 			}
 
 			this.tile.stage = 0;
@@ -108,6 +117,15 @@ class Action {
 				case "berries_flower_tilled":
 					this.harvest(game, [ "berries_flower", "berries_flower_seeds", "berries_flower_seeds" ], "tilled");
 					break;
+				case "orange_flower_tilled":
+					this.harvest(game, [ "orange_flower", "orange_flower_seeds", "orange_flower_seeds" ], "tilled");
+					break;
+				case "blue_flower_tilled":
+					this.harvest(game, [ "blue_flower", "blue_flower_seeds", "blue_flower_seeds" ], "tilled");
+					break;
+				case "lavender_flower_tilled":
+					this.harvest(game, [ "lavender_flower", "lavender_flower_seeds", "lavender_flower_seeds" ], "tilled");
+					break;
 			}
 
 			this.tile.stage = 0;
@@ -133,6 +151,15 @@ class Action {
 					break;
 				case "berries_flower_seeds":
 					this.tile.changeType(game, "berries_flower_tilled");
+					break;
+				case "blue_flower_seeds":
+					this.tile.changeType(game, "blue_flower_tilled");
+					break;
+				case "orange_flower_seeds":
+					this.tile.changeType(game, "orange_flower_tilled");
+					break;
+				case "lavender_flower_seeds":
+					this.tile.changeType(game, "lavender_flower_tilled");
 					break;
 			}
 		}

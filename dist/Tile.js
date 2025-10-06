@@ -1,3 +1,12 @@
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var Tile = /** @class */ (function () {
     function Tile(game, x, y, type) {
         this.stage = 0;
@@ -59,33 +68,54 @@ var Tile = /** @class */ (function () {
             case "berries_flower_tilled":
                 this.image = game.asset("berries-stage".concat(this.stage));
                 break;
+            case "orange_flower_tilled":
+                this.image = game.asset("orange-stage".concat(this.stage));
+                break;
+            case "blue_flower_tilled":
+                this.image = game.asset("blue-stage".concat(this.stage));
+                break;
+            case "lavender_flower_tilled":
+                this.image = game.asset("lavender-stage".concat(this.stage));
+                break;
             default:
                 this.image = game.asset("blank_tile");
                 break;
         }
     };
-    Tile.prototype.canGrow = function (game) {
+    Tile.prototype.canGrow = function (game, checkingFrom) {
+        var _this = this;
+        if (checkingFrom === void 0) { checkingFrom = []; }
         if (!Tile.plantNames[this.type]) {
             return false;
         }
-        var adjacent = game.world.getAdjacentTiles(this);
+        var adjacent = game.world.getAdjacentTiles(this, 1);
         var allTiles = adjacent.map(function (tile) { return tile.type; });
+        var twoAway = game.world.getAdjacentTiles(this, 2);
+        var checkGrowing = function (type, list) { return list
+            .filter(function (tile) { return tile.type === type; })
+            .filter(function (tile) { return checkingFrom.includes(tile) || tile.canGrow(game, __spreadArray(__spreadArray([], checkingFrom, true), [_this], false)); })
+            .length > 0; };
         switch (this.type) {
             case "white_flower_tilled":
             case "red_flower_tilled":
-            case "yellow_flower_tilled":
                 return true;
+            case "yellow_flower_tilled":
+                return twoAway.map(function (tile) { return tile.type; }).includes("water");
             case "purple_flower_tilled":
-                return allTiles.includes("water");
-            case "berries_flower_tilled":
-                var hasRedFlower = allTiles.includes("red_flower");
-                for (var _i = 0, adjacent_1 = adjacent; _i < adjacent_1.length; _i++) {
-                    var item = adjacent_1[_i];
-                    if (item.type === "red_flower_tilled" && item.canGrow(game)) {
-                        hasRedFlower = true;
-                    }
-                }
+                var hasRedFlower = allTiles.includes("red_flower") || checkGrowing("red_flower_tilled", adjacent);
                 return hasRedFlower && allTiles.includes("water");
+            case "berries_flower_tilled":
+                var growing = adjacent.filter(function (tile) {
+                    return checkingFrom.includes(tile) || tile.canGrow(game, __spreadArray(__spreadArray([], checkingFrom, true), [_this], false));
+                }).map(function (tile) { return tile.type; });
+                return (new Set(growing)).size >= 3;
+            case "blue_flower_tilled":
+                return checkGrowing("purple_flower_tilled", adjacent) && checkGrowing("berries_flower_tilled", adjacent);
+            case "lavender_flower_tilled":
+                return checkGrowing("blue_flower_tilled", twoAway) && checkGrowing("yellow_flower_tilled", adjacent);
+            case "orange_flower_tilled":
+                return adjacent.filter(function (tile) { return Tile.plantNames[tile.type]; }).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway)
+                    && checkGrowing("berries_flower_tilled", adjacent) && checkGrowing("yellow_flower_tilled", adjacent);
         }
         return false;
     };
@@ -216,10 +246,15 @@ var Tile = /** @class */ (function () {
             case "purple_flower_tilled":
             case "yellow_flower_tilled":
             case "berries_flower_tilled":
+            case "orange_flower_tilled":
+            case "blue_flower_tilled":
+            case "lavender_flower_tilled":
                 if (stage >= 2) {
                     options.push("harvest");
                 }
-                options.push("remove");
+                if (stage < 2) {
+                    options.push("remove");
+                }
                 break;
         }
         return options.filter(function (opt) {
@@ -235,14 +270,20 @@ var Tile = /** @class */ (function () {
         "red_flower_tilled": 1 / 600,
         "purple_flower_tilled": 1 / 2000,
         "yellow_flower_tilled": 1 / 1000,
-        "berries_flower_tilled": 1 / 1000
+        "berries_flower_tilled": 1 / 1000,
+        "orange_flower_tilled": 1 / 2000,
+        "blue_flower_tilled": 1 / 2000,
+        "lavender_flower_tilled": 1 / 2000
     };
     Tile.plantNames = {
         "white_flower_tilled": "Sunpetal",
         "red_flower_tilled": "Emberbloom",
         "purple_flower_tilled": "Dreamveil",
         "yellow_flower_tilled": "Sunspire",
-        "berries_flower_tilled": "Emberfruit"
+        "berries_flower_tilled": "Emberfruit",
+        "blue_flower_tilled": "Azurebell",
+        "orange_flower_tilled": "Maravine",
+        "lavender_flower_tilled": "Hushbloom"
     };
     return Tile;
 }());

@@ -35,12 +35,18 @@ class GraphicsLoader {
 		this.assets["yellow_flower_icon"] = this.loadImage("assets/flowers/yellow_flower_icon.png");
 		this.assets["purple_flower_icon"] = this.loadImage("assets/flowers/purple_flower_icon.png");
 		this.assets["berries_icon"] = this.loadImage("assets/flowers/berries_icon.png");
+		this.assets["blue_flower_icon"] = this.loadImage("assets/flowers/blue_flower_icon.png");
+		this.assets["orange_flower_icon"] = this.loadImage("assets/flowers/orange_flower_icon.png");
+		this.assets["lavender_flower_icon"] = this.loadImage("assets/flowers/lavender_flower_icon.png");
 
 		this.assets["white_flower_seeds"] = this.loadImage("assets/seeds/white_flower_seeds.png");
 		this.assets["red_flower_seeds"] = this.loadImage("assets/seeds/red_flower_seeds.png");
 		this.assets["purple_seeds"] = this.loadImage("assets/seeds/purple_seeds.png");
 		this.assets["yellow_seeds"] = this.loadImage("assets/seeds/yellow_seeds.png");
 		this.assets["berries_seeds"] = this.loadImage("assets/seeds/berries_seeds.png");
+		this.assets["orange_seeds"] = this.loadImage("assets/seeds/orange_seeds.png");
+		this.assets["blue_seeds"] = this.loadImage("assets/seeds/blue_seeds.png");
+		this.assets["lavender_seeds"] = this.loadImage("assets/seeds/lavender_seeds.png");
 
 		this.assets["inventory_item"] = this.loadImage("assets/inventory_item.png");
 		this.assets["action_box"] = this.loadImage("assets/action_box.png");
@@ -57,6 +63,8 @@ class GraphicsLoader {
 		this.assets["right-on"] = this.loadImage("assets/right-on.png");
 
 		this.assets["warning"] = this.loadImage("assets/warning.png");
+		this.assets["quest_box"] = this.loadImage("assets/quest_box.png");
+		this.assets["expression1"] = this.loadImage("assets/expression1.png");
 
 		for (let d = 0; d < 8; d++) {
 			this.player.push([]);
@@ -68,7 +76,7 @@ class GraphicsLoader {
 			}
 		}
 		
-		const planted = ["purple", "red", "berries", "white", "yellow"];
+		const planted = ["purple", "red", "berries", "white", "yellow", "orange", "blue", "lavender"];
 
 		for (const plant of planted) {
 			for (let i = 0; i < 3; i++) {

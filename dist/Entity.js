@@ -99,6 +99,36 @@ var Item = /** @class */ (function (_super) {
             "asset": "berries_icon",
             "name": "Emberfruit",
             "can_plant": false
+        },
+        "blue_flower_seeds": {
+            "asset": "blue_seeds",
+            "name": "Azurebell Seeds",
+            "can_plant": true
+        },
+        "blue_flower": {
+            "asset": "blue_flower_icon",
+            "name": "Azurebell",
+            "can_plant": false
+        },
+        "lavender_flower_seeds": {
+            "asset": "lavender_seeds",
+            "name": "Hushbloom Seeds",
+            "can_plant": true
+        },
+        "lavender_flower": {
+            "asset": "lavender_flower_icon",
+            "name": "Hushbloom",
+            "can_plant": false
+        },
+        "orange_flower_seeds": {
+            "asset": "orange_seeds",
+            "name": "Maravine Seeds",
+            "can_plant": true
+        },
+        "orange_flower": {
+            "asset": "orange_flower_icon",
+            "name": "Maravine",
+            "can_plant": false
         }
     };
     return Item;

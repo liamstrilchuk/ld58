@@ -92,13 +92,21 @@ class World {
 		}
 	}
 
-	public getAdjacentTiles(tile: Tile): Tile[] {
+	public getAdjacentTiles(tile: Tile, depth=1, prev: Tile[]=[]): Tile[] {
+		if (depth === 0) {
+			return [ tile ];
+		}
 		const positions = [[ tile.x - 1, tile.y ], [ tile.x + 1, tile.y ], [ tile.x, tile.y - 1 ], [ tile.x, tile.y + 1 ]];
 		const list: Tile[] = [];
+		if (prev.length) {
+			list.push(tile);
+		}
+		prev.push(tile);
 
 		for (const pos of positions) {
-			if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE) {
-				list.push(this.grid[pos[0]][pos[1]]);
+			if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE &&
+				!prev.includes(this.grid[pos[0]][pos[1]])) {
+				list.push(...this.getAdjacentTiles(this.grid[pos[0]][pos[1]], depth - 1, prev));
 			}
 		}
 

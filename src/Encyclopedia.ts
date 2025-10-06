@@ -13,7 +13,7 @@ class Encyclopedia {
 			new EncyclopediaEntry(
 				"Emberbloom",
 				"Velutina ardens",
-				"A common flower.",
+				"A rugged plant, which can be grown almost anywhere.",
 				"red_flower"
 			),
 			new EncyclopediaEntry(
@@ -25,13 +25,13 @@ class Encyclopedia {
 			new EncyclopediaEntry(
 				"Sunspire",
 				"Heliora aurelia",
-				"A rugged plant, which can be grown almost anywhere. Has been described as tasting like lemons.",
+				"Has been described as tasting like lemons. Must be grown within two tiles of water.",
 				"yellow_flower"
 			),
 			new EncyclopediaEntry(
 				"Dreamveil",
 				"Nymphaea violacea",
-				"A distant relative of the Tidebloom. Must be grown adjacent to water. Said to treat many kinds of ailments, though this has not been proven.",
+				"A distant relative of the Tidebloom. Must be grown adjacent to water, and an Emberbloom. Said to treat many kinds of ailments, though this has not been proven.",
 				"purple_flower"
 			)
 		];

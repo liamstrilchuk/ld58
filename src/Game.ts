@@ -19,13 +19,16 @@ class Game {
 	public world = new World(this);
 
 	public hoeUnlocked = false;
-	public bookUnlocked = true;
+	public bookUnlocked = false;
 	public currentQuest = 0;
 	public questSelected = false;
 	public encyclopediaSelected = false;
 	public selectingSeeds = false;
 	public infoText: string = "";
 	public inventoryButtons: { x: number, y: number, w: number, h: number, item: string }[] = [];
+	public canOpenQuest = false;
+
+	public testingMode = false;
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
@@ -156,6 +159,10 @@ class Game {
 		if (this.infoText) {
 			this.drawInfoText(this.infoText);
 		}
+
+		if (!this.questSelected && quests[this.currentQuest].finishedRendering && !quests[this.currentQuest].complete) {
+			quests[this.currentQuest].drawRequirements(this, this.ctx, 10, 10, true);
+		}
 	}
 
 	public drawInfoText(text: string) {
@@ -221,11 +228,15 @@ class Game {
 
 	public onKeyDown(key: string) {
 		if (key === "q") {
-			this.questSelected = !this.questSelected;
+			if (this.questSelected) {
+				this.questSelected = false;
+			} else if (this.canOpenQuest) {
+				this.questSelected = true;
+			}
 			this.encyclopediaSelected = false;
 		}
 
-		if (key === "e") {
+		if (key === "e" && this.bookUnlocked) {
 			this.encyclopediaSelected = !this.encyclopediaSelected;
 			this.questSelected = false;
 		}
@@ -234,6 +245,10 @@ class Game {
 			this.encyclopediaSelected = false;
 			this.questSelected = false;
 			this.selectingSeeds = false;
+		}
+
+		if (key === "enter" && this.questSelected) {
+			quests[this.currentQuest].nextPressed(this);
 		}
 
 		if (key === "arrowleft" && this.encyclopediaSelected) {
