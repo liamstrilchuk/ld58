@@ -28,7 +28,7 @@ class Game {
 	public inventoryButtons: { x: number, y: number, w: number, h: number, item: string }[] = [];
 	public canOpenQuest = false;
 
-	public testingMode = true;
+	public testingMode = false;
 	public started = false;
 	private startButtonPos = [ 0, 0, 0, 0 ];
 
