@@ -121,7 +121,18 @@ var Tile = /** @class */ (function () {
                 return adjacent.filter(function (tile) { return Tile.plantNames[tile.type]; }).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway) > 0
                     && checkGrowing("berries_flower_tilled", adjacent) > 0 && checkGrowing("yellow_flower_tilled", adjacent) > 0;
             case "mushroom_flower_tilled":
-                return checkGrowing("orange_flower_tilled", twoAway) >= 2;
+                var unique = [];
+                for (var _i = 0, twoAway_1 = twoAway; _i < twoAway_1.length; _i++) {
+                    var tile = twoAway_1[_i];
+                    if (unique.includes(tile)) {
+                        continue;
+                    }
+                    if (tile.type === "orange_flower_tilled" &&
+                        (checkingFrom.includes(tile) || tile.canGrow(game, __spreadArray(__spreadArray([], checkingFrom, true), [this], false)))) {
+                        unique.push(tile);
+                    }
+                }
+                return unique.length >= 2;
         }
         return false;
     };

@@ -148,7 +148,17 @@ class Tile {
 				return adjacent.filter(tile => Tile.plantNames[tile.type]).length <= 2 && checkGrowing("lavender_flower_tilled", twoAway) > 0
 					&& checkGrowing("berries_flower_tilled", adjacent) > 0 && checkGrowing("yellow_flower_tilled", adjacent) > 0;
 			case "mushroom_flower_tilled":
-				return checkGrowing("orange_flower_tilled", twoAway) >= 2;
+				const unique = [];
+				for (const tile of twoAway) {
+					if (unique.includes(tile)) {
+						continue;
+					}
+					if (tile.type === "orange_flower_tilled" &&
+						(checkingFrom.includes(tile) || tile.canGrow(game, [...checkingFrom, this]))) {
+						unique.push(tile);
+					}
+				}
+				return unique.length >= 2;
 		}
 
 		return false;
