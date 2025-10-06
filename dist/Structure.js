@@ -15,16 +15,28 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var Structure = /** @class */ (function (_super) {
     __extends(Structure, _super);
-    function Structure(x, y, width, height, assets, animSpeed) {
+    function Structure(x, y, width, height, assets, animSpeed, collide) {
         var _this = _super.call(this, x, y) || this;
         _this.frame = 0;
         _this.assets = assets;
         _this.width = width;
         _this.height = height;
         _this.animSpeed = animSpeed;
+        _this.collide = collide;
         return _this;
     }
-    Structure.prototype.render = function (game, ctx) {
+    Structure.prototype.renderY = function (game) {
+        return Tile.renderPos(game, this.x + this.width / 2, this.y + this.height / 2).y;
+    };
+    Structure.prototype.update = function (game, delta) { return false; };
+    return Structure;
+}(Entity));
+var House = /** @class */ (function (_super) {
+    __extends(House, _super);
+    function House(game, x, y) {
+        return _super.call(this, x, y, 5, 5, [game.asset("house"), game.asset("house2"), game.asset("house3")], 60, true) || this;
+    }
+    House.prototype.render = function (game, ctx) {
         var asset = this.assets[this.frame];
         var _a = Tile.renderPos(game, this.x, this.y + 3), x = _a.x, y = _a.y;
         var Tw = game.TILE_WIDTH * game.TILE_SCALE, Th = game.TILE_HEIGHT * game.TILE_SCALE;
@@ -35,14 +47,22 @@ var Structure = /** @class */ (function (_super) {
             this.frame = (this.frame + 1) % this.assets.length;
         }
     };
-    return Structure;
-}(Entity));
-var House = /** @class */ (function (_super) {
-    __extends(House, _super);
-    function House(game, x, y) {
-        return _super.call(this, x, y, 5, 5, [game.asset("house"), game.asset("house2"), game.asset("house3")], 60) || this;
-    }
-    House.prototype.update = function (game, delta) { return false; };
-    ;
     return House;
+}(Structure));
+var Tree = /** @class */ (function (_super) {
+    __extends(Tree, _super);
+    function Tree(game, x, y) {
+        var assets = [game.asset("tree1"), game.asset("tree2"), game.asset("tree3"), game.asset("tree4")];
+        return _super.call(this, x, y, 2, 2, [assets[Math.floor(Math.random() * assets.length)]], 60, false) || this;
+    }
+    Tree.prototype.render = function (game, ctx) {
+        var asset = this.assets[0];
+        var _a = Tile.renderPos(game, this.x - 3, this.y - 3), x = _a.x, y = _a.y;
+        var Tw = game.TILE_WIDTH * game.TILE_SCALE, Th = game.TILE_HEIGHT * game.TILE_SCALE;
+        ctx.drawImage(asset, x - Tw / 2, y - Th, this.width * Tw, this.height * Tw);
+        if (game.frame % this.animSpeed === 0) {
+            this.frame = (this.frame + 1) % this.assets.length;
+        }
+    };
+    return Tree;
 }(Structure));

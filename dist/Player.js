@@ -49,7 +49,7 @@ var Player = /** @class */ (function (_super) {
         }
         var overTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
         var speed = (overTile === null || overTile === void 0 ? void 0 : overTile.type) === "water" ? this.speed / 2 : this.speed;
-        if (typeof dir === "undefined") {
+        if (typeof dir === "undefined" || game.questSelected) {
             return;
         }
         if (game.frame % 10 === 0) {
@@ -71,7 +71,7 @@ var Player = /** @class */ (function (_super) {
         var asset = game.graphics.player[this.walkDir][this.walkFrame];
         ctx.drawImage(asset, game.renderX(this.x) - 60, game.renderY(this.y) - 60 * (asset.height / asset.width), 120, 120 * (asset.height / asset.width));
         var tile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
-        var dist = Math.hypot(tile.x - game.world.structures[0].x - 2, tile.y - game.world.structures[0].y - 3);
+        var dist = Math.hypot(tile.x - game.world.house.x - 2, tile.y - game.world.house.y - 3);
         game.canOpenQuest = false;
         if (dist < 3 && !game.questSelected && !game.encyclopediaSelected) {
             game.infoText = "Press Q to talk";

@@ -14,7 +14,6 @@ var Game = /** @class */ (function () {
         this.TILE_HEIGHT = 15;
         this.TILE_SCALE = 6;
         this.frame = 0;
-        this.world = new World(this);
         this.hoeUnlocked = false;
         this.bookUnlocked = false;
         this.currentQuest = 0;
@@ -24,14 +23,43 @@ var Game = /** @class */ (function () {
         this.infoText = "";
         this.inventoryButtons = [];
         this.canOpenQuest = false;
-        this.testingMode = false;
+        this.testingMode = true;
+        this.started = false;
+        this.startButtonPos = [0, 0, 0, 0];
         this.ctx = ctx;
+        this.world = new World(this);
     }
     Game.prototype.addEntity = function (entity) {
         this.entities.push(entity);
     };
+    Game.prototype.renderHome = function () {
+        if (this.started) {
+            return;
+        }
+        var home = this.asset("home");
+        var height = this.ctx.canvas.height, width = this.ctx.canvas.height * home.width / home.height;
+        if (this.ctx.canvas.width * home.height / home.width < this.ctx.canvas.height) {
+            this.ctx.drawImage(home, 0, 0, this.ctx.canvas.height * home.width / home.height, this.ctx.canvas.height);
+        }
+        else {
+            this.ctx.drawImage(home, 0, 0, this.ctx.canvas.width, this.ctx.canvas.width * home.height / home.width);
+            height = this.ctx.canvas.width * home.height / home.width;
+            width = this.ctx.canvas.width;
+        }
+        var start = this.asset("start");
+        if (this.mousePos.x >= width * 0.07 && this.mousePos.x < width * 0.07 + 200 &&
+            this.mousePos.y >= height * 0.45 && this.mousePos.y < height * 0.45 + 200 * start.height / start.width) {
+            this.ctx.drawImage(start, width * 0.07 - 5, height * 0.45 - 5 * start.height / start.width, 210, 210 * start.height / start.width);
+        }
+        else {
+            this.ctx.drawImage(start, width * 0.07, height * 0.45, 200, 200 * start.height / start.width);
+        }
+        this.startButtonPos = [width * 0.07, height * 0.45, 200, 200 * start.height / start.width];
+        window.requestAnimationFrame(this.renderHome.bind(this));
+    };
     Game.prototype.start = function () {
         var _this = this;
+        this.started = true;
         quests.forEach(function (quest) { return quest.getLines(_this.ctx); });
         this.update();
     };
@@ -65,7 +93,6 @@ var Game = /** @class */ (function () {
         this.ctx.fillStyle = "#8db3c5";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.world.render(this, this.ctx);
-        this.player.render(this, this.ctx);
         this.entities.forEach(function (entity) { return entity.render(game, _this.ctx); });
         this.world.renderAfter(this, this.ctx);
         this.buttons.forEach(function (button) { return button.render(_this, _this.ctx); });
@@ -152,8 +179,8 @@ var Game = /** @class */ (function () {
     Game.prototype.structureAtTile = function (tile) {
         for (var _i = 0, _a = this.world.structures; _i < _a.length; _i++) {
             var struct = _a[_i];
-            if (tile.x >= struct.x && tile.x < struct.x + struct.width &&
-                tile.y >= struct.y && tile.y < struct.y + struct.height) {
+            if (tile.x >= struct.x && tile.x < struct.x + Math.min(struct.width, 4) &&
+                tile.y >= struct.y && tile.y < struct.y + struct.height && struct.collide) {
                 return true;
             }
         }
@@ -170,6 +197,9 @@ var Game = /** @class */ (function () {
         return this.keys[key] || false;
     };
     Game.prototype.onKeyDown = function (key) {
+        if (!this.started) {
+            return;
+        }
         if (key === "q") {
             if (this.questSelected) {
                 this.questSelected = false;
@@ -214,6 +244,14 @@ var Game = /** @class */ (function () {
         return null;
     };
     Game.prototype.onMouseDown = function () {
+        if (!this.started) {
+            var bp = this.startButtonPos;
+            if (this.mousePos.x >= bp[0] && this.mousePos.x <= bp[0] + bp[2] &&
+                this.mousePos.y >= bp[1] && this.mousePos.y <= bp[1] + bp[3]) {
+                this.start();
+            }
+            return;
+        }
         this.mouseDown = true;
         if (this.questSelected) {
             quests[this.currentQuest].onMouseDown(this, this.mousePos.x, this.mousePos.y);

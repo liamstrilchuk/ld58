@@ -4,6 +4,7 @@ class World {
 	public hoveredTile: Tile = null;
 	public selectedTile: Tile = null;
 	public structures: Structure[] = [];
+	public house: House;
 
 	constructor(game: Game) {
 		this.generateWorld(game);
@@ -27,7 +28,12 @@ class World {
 	}
 
 	public renderAfter(game: Game, ctx: CanvasRenderingContext2D) {
-		this.structures.forEach(struct => struct.render(game, ctx));
+		[game.player, ...this.structures].sort((a, b) => {
+			const val1 = a instanceof Player ? game.ctx.canvas.height / 2 + 20 : a.renderY(game);
+			const val2 = b instanceof Player ? game.ctx.canvas.height / 2 + 20 : b.renderY(game);
+
+			return val1 - val2;
+		}).forEach(entity => entity.render(game, ctx));
 
 		if (this.selectedTile) {
 			this.selectedTile.createButtons(game);
@@ -48,6 +54,7 @@ class World {
 		this.structures.push(
 			new House(game, Math.floor(this.WORLD_SIZE / 2) - 2, Math.floor(this.WORLD_SIZE / 2) - 2)
 		);
+		this.house = this.structures[0];
 		
 		for (let x = 0; x < this.WORLD_SIZE; x++) {
 			this.grid.push([]);
@@ -61,7 +68,26 @@ class World {
 			}
 		}
 
-		game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT;
+		game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT / 2 + game.TILE_HEIGHT * game.TILE_SCALE * 7;
+
+		for (let i = 0; i < 200; i++) {
+			const root = this.selectRandomTile();
+			let canPlant = this.canPlaceStructure(root.x, root.y, 2, 2);
+
+			for (let x = 0; x < 2; x++) {
+				for (let y = 0; y < 2; y++) {
+					if (!this.posInWorld(x + root.x, y + root.y) || this.grid[x + root.x][y + root.y].type !== "grass") {
+						canPlant = false;
+					}
+				}
+			}
+
+			if (canPlant) {
+				this.structures.push(new Tree(game, root.x, root.y));
+			}
+		}
+
+		this.structures.sort((a, b) => a.renderY(game) - b.renderY(game));
 	}
 
 	private determineTileType(x: number, y: number): string {
@@ -80,7 +106,7 @@ class World {
 		} else if (combined < 0.18) {
 			return "sand";
 		} else {
-			if (Math.random() < 0.3) {
+			if (Math.random() < 0.2) {
 				if (Math.random() < 0.8) {
 					return "flower";
 				} else {
@@ -90,6 +116,10 @@ class World {
 
 			return "grass";
 		}
+	}
+
+	public posInWorld(x: number, y: number): boolean {
+		return x >= 0 && x < this.WORLD_SIZE && y >= 0 && y < this.WORLD_SIZE;
 	}
 
 	public getAdjacentTiles(tile: Tile, depth=1, prev: Tile[]=[]): Tile[] {
@@ -104,12 +134,32 @@ class World {
 		prev.push(tile);
 
 		for (const pos of positions) {
-			if (pos[0] >= 0 && pos[0] < this.WORLD_SIZE && pos[1] >= 0 && pos[1] < this.WORLD_SIZE &&
-				!prev.includes(this.grid[pos[0]][pos[1]])) {
+			if (this.posInWorld(pos[0], pos[1]) && !prev.includes(this.grid[pos[0]][pos[1]])) {
 				list.push(...this.getAdjacentTiles(this.grid[pos[0]][pos[1]], depth - 1, prev));
 			}
 		}
 
 		return list;
+	}
+
+	private selectRandomTile(): Tile {
+		const x = Math.floor(Math.random() * this.WORLD_SIZE), y = Math.floor(Math.random() * this.WORLD_SIZE);
+
+		return this.grid[x][y];
+	}
+
+	private canPlaceStructure(x: number, y: number, w: number, h: number): boolean {
+		for (const struct of this.structures) {
+			for (let i = 0; i < w; i++) {
+				for (let j = 0; j < h; j++) {
+					if (x + i >= struct.x && x + i < struct.x + struct.width
+						&& y + j >= struct.y && y + j < struct.y + struct.height) {
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 }

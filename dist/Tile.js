@@ -267,13 +267,13 @@ var Tile = /** @class */ (function () {
     Tile.recessedTypes = ["water", "water_flower"];
     Tile.growingChances = {
         "white_flower_tilled": 1 / 300,
-        "red_flower_tilled": 1 / 600,
-        "purple_flower_tilled": 1 / 2000,
-        "yellow_flower_tilled": 1 / 1000,
-        "berries_flower_tilled": 1 / 1000,
-        "orange_flower_tilled": 1 / 2000,
-        "blue_flower_tilled": 1 / 2000,
-        "lavender_flower_tilled": 1 / 2000
+        "red_flower_tilled": 1 / 400,
+        "purple_flower_tilled": 1 / 500,
+        "yellow_flower_tilled": 1 / 500,
+        "berries_flower_tilled": 1 / 500,
+        "orange_flower_tilled": 1 / 500,
+        "blue_flower_tilled": 1 / 500,
+        "lavender_flower_tilled": 1 / 500
     };
     Tile.plantNames = {
         "white_flower_tilled": "Sunpetal",

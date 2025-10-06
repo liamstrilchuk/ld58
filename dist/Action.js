@@ -137,7 +137,7 @@ var Action = /** @class */ (function () {
     };
     Action.actionTimes = {
         harvest: 30,
-        till: 60,
+        till: 40,
         plant: 20,
         remove: 20
     };

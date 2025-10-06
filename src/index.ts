@@ -9,7 +9,7 @@ window.addEventListener("load", () => {
 	ctx.imageSmoothingEnabled = false;
 
 	game = new Game(ctx);
-	game.start();
+	game.renderHome();
 
 	window.addEventListener(
 		"keydown",

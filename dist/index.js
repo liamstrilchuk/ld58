@@ -6,7 +6,7 @@ window.addEventListener("load", function () {
     canvas.height = window.innerHeight;
     ctx.imageSmoothingEnabled = false;
     game = new Game(ctx);
-    game.start();
+    game.renderHome();
     window.addEventListener("keydown", function (event) { return game.onKeyDown(event.key.toLowerCase()); });
     window.addEventListener("keyup", function (event) { return game.onKeyUp(event.key.toLowerCase()); });
     window.addEventListener("mousedown", function () { return game.onMouseDown(); });

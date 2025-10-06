@@ -1,7 +1,7 @@
 class Action {
 	private static actionTimes: { [key: string]: number } = {
 		harvest: 30,
-		till: 60,
+		till: 40,
 		plant: 20,
 		remove: 20
 	};

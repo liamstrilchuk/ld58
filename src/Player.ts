@@ -39,7 +39,7 @@ class Player extends Entity {
 		const overTile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
 		const speed = overTile?.type === "water" ? this.speed / 2 : this.speed;
 
-		if (typeof dir === "undefined") {
+		if (typeof dir === "undefined" || game.questSelected) {
 			return;
 		}
 
@@ -72,7 +72,7 @@ class Player extends Entity {
 		);
 
 		const tile = game.getTileAtPos(game.ctx.canvas.width / 2, game.ctx.canvas.height / 2);
-		const dist = Math.hypot(tile.x - game.world.structures[0].x - 2, tile.y - game.world.structures[0].y - 3);
+		const dist = Math.hypot(tile.x - game.world.house.x - 2, tile.y - game.world.house.y - 3);
 
 		game.canOpenQuest = false;
 		if (dist < 3 && !game.questSelected && !game.encyclopediaSelected) {

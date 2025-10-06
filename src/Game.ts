@@ -16,7 +16,7 @@ class Game {
 	public TILE_SCALE = 6;
 
 	public frame = 0;
-	public world = new World(this);
+	public world: World;
 
 	public hoeUnlocked = false;
 	public bookUnlocked = false;
@@ -28,17 +28,49 @@ class Game {
 	public inventoryButtons: { x: number, y: number, w: number, h: number, item: string }[] = [];
 	public canOpenQuest = false;
 
-	public testingMode = false;
+	public testingMode = true;
+	public started = false;
+	private startButtonPos = [ 0, 0, 0, 0 ];
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx;
+		this.world = new World(this);
 	}
 
 	public addEntity(entity: Entity) {
 		this.entities.push(entity);
 	}
 
+	public renderHome() {
+		if (this.started) {
+			return;
+		}
+
+		const home = this.asset("home");
+		let height = this.ctx.canvas.height, width = this.ctx.canvas.height * home.width / home.height;
+		if (this.ctx.canvas.width * home.height / home.width < this.ctx.canvas.height) {
+			this.ctx.drawImage(home, 0, 0, this.ctx.canvas.height * home.width / home.height, this.ctx.canvas.height);
+		} else {
+			this.ctx.drawImage(home, 0, 0, this.ctx.canvas.width, this.ctx.canvas.width * home.height / home.width);
+			height = this.ctx.canvas.width * home.height / home.width;
+			width = this.ctx.canvas.width;
+		}
+
+		const start = this.asset("start");
+		if (this.mousePos.x >= width * 0.07 && this.mousePos.x < width * 0.07 + 200 &&
+			this.mousePos.y >= height * 0.45 && this.mousePos.y < height * 0.45 + 200 * start.height / start.width) {
+			this.ctx.drawImage(start, width * 0.07 - 5, height * 0.45 - 5 * start.height / start.width, 210, 210 * start.height / start.width);
+		} else {
+			this.ctx.drawImage(start, width * 0.07, height * 0.45, 200, 200 * start.height / start.width);
+		}
+
+		this.startButtonPos = [ width * 0.07, height * 0.45, 200, 200 * start.height / start.width ];
+
+		window.requestAnimationFrame(this.renderHome.bind(this));
+	}
+
 	public start() {
+		this.started = true;
 		quests.forEach(quest => quest.getLines(this.ctx));
 		this.update();
 	}
@@ -78,7 +110,6 @@ class Game {
 		this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
 		this.world.render(this, this.ctx);
-		this.player.render(this, this.ctx);
 		this.entities.forEach(entity => entity.render(game, this.ctx));
 		this.world.renderAfter(this, this.ctx);
 
@@ -201,8 +232,8 @@ class Game {
 
 	public structureAtTile(tile: Tile): boolean {
 		for (const struct of this.world.structures) {
-			if (tile.x >= struct.x && tile.x < struct.x + struct.width &&
-				tile.y >= struct.y && tile.y < struct.y + struct.height) {
+			if (tile.x >= struct.x && tile.x < struct.x + Math.min(struct.width, 4) &&
+				tile.y >= struct.y && tile.y < struct.y + struct.height && struct.collide) {
 				return true;
 			}
 		}
@@ -227,6 +258,10 @@ class Game {
 	}
 
 	public onKeyDown(key: string) {
+		if (!this.started) {
+			return;
+		}
+
 		if (key === "q") {
 			if (this.questSelected) {
 				this.questSelected = false;
@@ -279,6 +314,15 @@ class Game {
 	}
 
 	public onMouseDown() {
+		if (!this.started) {
+			const bp = this.startButtonPos;
+			if (this.mousePos.x >= bp[0] && this.mousePos.x <= bp[0] + bp[2] &&
+				this.mousePos.y >= bp[1] && this.mousePos.y <= bp[1] + bp[3]) {
+				this.start();
+			}
+			return;
+		}
+
 		this.mouseDown = true;
 
 		if (this.questSelected) {

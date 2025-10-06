@@ -11,10 +11,13 @@ class Quest {
 	private button: { x: number, y: number, w: number, h: number } = null;
 	private itemsGotten: { asset: string, name: string }[];
 	private startFuncRun = false;
+	private beforeExp: string;
+	private endExp: string;
 
 	constructor(
 		text: string,
 		completedText: string,
+		beforeExp: string, endExp: string,
 		needs: { [key: string]: number },
 		onComplete: (game: Game) => void,
 		onStart: (game: Game) => void,
@@ -26,6 +29,8 @@ class Quest {
 		this.onStart = onStart;
 		this.onComplete = onComplete;
 		this.itemsGotten = itemsGotten;
+		this.beforeExp = beforeExp;
+		this.endExp = endExp;
 	}
 
 	public render(game: Game, ctx: CanvasRenderingContext2D) {
@@ -56,7 +61,7 @@ class Quest {
 			800, 800 * asset.height / asset.width
 		);
 
-		const expression = game.asset("expression1");
+		const expression = game.asset(this.complete ? this.endExp : this.beforeExp);
 		ctx.drawImage(
 			expression,
 			ctx.canvas.width / 2 + 125, ctx.canvas.height - ratio * expression.height + 50,
@@ -88,10 +93,13 @@ class Quest {
 
 		if (this.finishedRendering && !this.complete) {
 			const allAcquired = this.drawRequirements(game, ctx, currentX, currentY);
+			const text = allAcquired ? "Press enter to continue..." : "Press enter to close...";
+
+			ctx.font = "20px Courier New";
+			ctx.fillStyle = "white";
+			ctx.fillText(text, left + 15, currentY + 85);
 
 			if (allAcquired) {
-				ctx.font = "20px Courier New";
-				ctx.fillText("Press enter to continue...", left + 15, currentY + 85);
 				this.button = {
 					x: left, y: currentY + 70,
 					w: 140, h: 50
@@ -114,7 +122,8 @@ class Quest {
 			}
 
 			ctx.font = "20px Courier New";
-			ctx.fillText("Press enter to continue...", left + 15, currentY + 85);
+			const text = game.currentQuest >= quests.length - 1 ? "Press enter to close..." : "Press enter to continue...";
+			ctx.fillText(text, left + 15, currentY + 85);
 			this.button = {
 				x: left + 20, y: currentY + 10,
 				w: 140, h: 50
@@ -194,7 +203,11 @@ class Quest {
 
 			this.onComplete(game);
 		} else {
-			game.currentQuest++;
+			if (game.currentQuest < quests.length - 1) {
+				game.currentQuest++;
+			} else {
+				game.questSelected = false;
+			}
 		}
 	}
 
@@ -238,6 +251,8 @@ const quests = [
 	new Quest(
 		"So, you wanted to learn a little something about farming, did you? Well, I can help with that. I've been farming for years. Tell you what, you bring me some flowers for my garden and I'll give you some tools to get you started.",
 		"Oh, thank you! As promised, here's a tool that'll help you get started farming in no time. Take some seeds as well. Once you've tried it out, come back here and I'll give you something else.",
+		"expression-wink",
+		"expression-smile",
 		{
 			"flower": 5,
 			"water_flower": 3,
@@ -260,8 +275,10 @@ const quests = [
 		]
 	),
 	new Quest(
-		"Why don't you try out your new tool and farm some crops? Once you're done, I have a surprise for you.",
+		"Why don't you try out your new tool and farm some crops? Remember, the Sunspire needs to be grown next to water. Once you're done, I have a surprise for you.",
 		"Great job on farming those crops, you're a natural! Now, I have something special to show you. This is an old encyclopedia I found laying around, it tells you everything you need to know about farming. Take a look!",
+		"expression-default",
+		"expression-wink",
 		{
 			"yellow_flower": 1
 		},
@@ -284,6 +301,8 @@ const quests = [
 	new Quest(
 		"Here are some more seeds to try growing. Let me know once you figure it out! Make sure to look in the encyclopedia to see what this plant needs to grow.",
 		"Wow, I'm impressed! Now, a new challenge for you...",
+		"expression-smile",
+		"expression-o",
 		{
 			"purple_flower": 1
 		},
@@ -311,8 +330,10 @@ const quests = [
 		]
 	),
 	new Quest(
-		"The Emberfruit is a tricky plant to grow, because it needs to be grown next to another plant. They're also extremely tasty!",
+		"The Emberfruit is a tricky plant to grow, because it needs to be grown next to another plant. They're also extremely tasty! Remember, \"next\" or \"adjacent\" only means the four tiles sharing a side, not diagonals!",
 		"Thanks for the snack! (nom nom) Now that you've mastered the basics, here's something a bit more complicated.",
+		"expression-default",
+		"expression-tongue",
 		{
 			"berries_flower": 1
 		},
@@ -340,8 +361,10 @@ const quests = [
 		]
 	),
 	new Quest(
-		"start",
-		"end",
+		"Azurebells are my favorite plant, their striking blue color sets them apart from others. It took me years to learn how to grow them, though! Let's see if you can figure it out more quickly with the help of the encyclopedia.",
+		"Great work! Some more seeds for you...",
+		"expression-smile",
+		"expression-wink",
 		{
 			"blue_flower": 1
 		},
@@ -369,8 +392,10 @@ const quests = [
 		]
 	),
 	new Quest(
-		"start",
-		"end",
+		"The Hushbloom smells different to each person, and its fragrance can calm even the most stressed mind.",
+		"<inhales> oh, smells like spring! I've taught you everything I know, but here's a final challenge for you.",
+		"expression-default",
+		"expression-smile",
 		{
 			"lavender_flower": 1
 		},
@@ -398,17 +423,15 @@ const quests = [
 		]
 	),
 	new Quest(
-		"start",
-		"end",
+		"The maravine is the most complex plant to exist. I've never been able to make one, despite years of trying. Just for fun, let's see if you can do it!",
+		"You... did it? Well, I suppose the student has become the master. Feel free to explore around some more!",
+		"expression-wink",
+		"expression-smile",
 		{
 			"orange_flower": 1
 		},
-		(game: Game) => {
-
-		},
 		(game: Game) => {},
-		[
-
-		]
+		(game: Game) => {},
+		[]
 	)
 ];

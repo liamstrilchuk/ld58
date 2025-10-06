@@ -64,7 +64,19 @@ class GraphicsLoader {
 
 		this.assets["warning"] = this.loadImage("assets/warning.png");
 		this.assets["quest_box"] = this.loadImage("assets/quest_box.png");
-		this.assets["expression1"] = this.loadImage("assets/expression1.png");
+		this.assets["expression-tongue"] = this.loadImage("assets/expression1.png");
+		this.assets["expression-wink"] = this.loadImage("assets/expression2.png");
+		this.assets["expression-default"] = this.loadImage("assets/expression3.png");
+		this.assets["expression-o"] = this.loadImage("assets/expression4.png");
+		this.assets["expression-smile"] = this.loadImage("assets/expression5.png");
+
+		this.assets["tree1"] = this.loadImage("assets/tree1.png");
+		this.assets["tree2"] = this.loadImage("assets/tree2.png");
+		this.assets["tree3"] = this.loadImage("assets/tree3.png");
+		this.assets["tree4"] = this.loadImage("assets/tree4.png");
+
+		this.assets["start"] = this.loadImage("assets/start.png");
+		this.assets["home"] = this.loadImage("assets/home.png");
 
 		for (let d = 0; d < 8; d++) {
 			this.player.push([]);
