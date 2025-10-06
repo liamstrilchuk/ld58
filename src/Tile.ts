@@ -4,17 +4,18 @@ class Tile {
 	public type: string;
 	public image: HTMLImageElement;
 	public stage: number = 0;
+	private ticksWithoutGrowing = 0;
 
 	private static recessedTypes = ["water", "water_flower"];
 
 	private static growingChances = {
 		"white_flower_tilled": 1/300,
 		"red_flower_tilled": 1/400,
-		"purple_flower_tilled": 1/500,
+		"purple_flower_tilled": 1/700,
 		"yellow_flower_tilled": 1/500,
 		"berries_flower_tilled": 1/500,
-		"orange_flower_tilled": 1/500,
-		"blue_flower_tilled": 1/500,
+		"orange_flower_tilled": 1/800,
+		"blue_flower_tilled": 1/600,
 		"lavender_flower_tilled": 1/500
 	};
 
@@ -147,13 +148,15 @@ class Tile {
 	}
 
 	public update(game: Game, delta: number) {
+		this.ticksWithoutGrowing += delta;
 		if (!Tile.growingChances[this.type] || !this.canGrow(game)) {
 			return;
 		}
 
-		if (Math.random() < Tile.growingChances[this.type] * delta) {
+		if (Math.random() < Tile.growingChances[this.type] * delta || this.ticksWithoutGrowing > 1 / Tile.growingChances[this.type]) {
 			this.stage = Math.min(this.stage + 1, 2);
 			this.determineImage(game);
+			this.ticksWithoutGrowing = 0;
 		}
 	}
 
@@ -294,7 +297,6 @@ class Tile {
 				options.push("till", "harvest");
 				break;
 			case "tilled":
-				options.push("plant");
 				break;
 			case "red_flower_tilled":
 			case "white_flower_tilled":

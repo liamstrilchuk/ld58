@@ -10,6 +10,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 var Tile = /** @class */ (function () {
     function Tile(game, x, y, type) {
         this.stage = 0;
+        this.ticksWithoutGrowing = 0;
         this.x = x;
         this.y = y;
         this.type = type;
@@ -120,12 +121,14 @@ var Tile = /** @class */ (function () {
         return false;
     };
     Tile.prototype.update = function (game, delta) {
+        this.ticksWithoutGrowing += delta;
         if (!Tile.growingChances[this.type] || !this.canGrow(game)) {
             return;
         }
-        if (Math.random() < Tile.growingChances[this.type] * delta) {
+        if (Math.random() < Tile.growingChances[this.type] * delta || this.ticksWithoutGrowing > 1 / Tile.growingChances[this.type]) {
             this.stage = Math.min(this.stage + 1, 2);
             this.determineImage(game);
+            this.ticksWithoutGrowing = 0;
         }
     };
     Tile.prototype.render = function (game, ctx, isSelected, isHovered, structures) {
@@ -239,7 +242,6 @@ var Tile = /** @class */ (function () {
                 options.push("till", "harvest");
                 break;
             case "tilled":
-                options.push("plant");
                 break;
             case "red_flower_tilled":
             case "white_flower_tilled":
@@ -268,11 +270,11 @@ var Tile = /** @class */ (function () {
     Tile.growingChances = {
         "white_flower_tilled": 1 / 300,
         "red_flower_tilled": 1 / 400,
-        "purple_flower_tilled": 1 / 500,
+        "purple_flower_tilled": 1 / 700,
         "yellow_flower_tilled": 1 / 500,
         "berries_flower_tilled": 1 / 500,
-        "orange_flower_tilled": 1 / 500,
-        "blue_flower_tilled": 1 / 500,
+        "orange_flower_tilled": 1 / 800,
+        "blue_flower_tilled": 1 / 600,
         "lavender_flower_tilled": 1 / 500
     };
     Tile.plantNames = {

@@ -81,5 +81,10 @@ var GraphicsLoader = /** @class */ (function () {
         image.src = src;
         return image;
     };
+    GraphicsLoader.prototype.loadAudio = function (src) {
+        var audio = new Audio();
+        audio.src = src;
+        return audio;
+    };
     return GraphicsLoader;
 }());

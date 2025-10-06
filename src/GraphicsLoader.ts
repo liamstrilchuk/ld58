@@ -102,4 +102,10 @@ class GraphicsLoader {
 		image.src = src;
 		return image;
 	}
+
+	public loadAudio(src: string): HTMLAudioElement {
+		const audio = new Audio();
+		audio.src = src;
+		return audio;
+	}
 }

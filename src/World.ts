@@ -70,6 +70,8 @@ class World {
 
 		game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT / 2 + game.TILE_HEIGHT * game.TILE_SCALE * 7;
 
+		const { x: houseRx, y: houseRy } = Tile.renderPos(game, this.house.x + 2, this.house.y + 2);
+
 		for (let i = 0; i < 200; i++) {
 			const root = this.selectRandomTile();
 			let canPlant = this.canPlaceStructure(root.x, root.y, 2, 2);
@@ -80,6 +82,12 @@ class World {
 						canPlant = false;
 					}
 				}
+			}
+
+			const { x: treeRx, y: treeRy } = Tile.renderPos(game, root.x, root.y);
+
+			if (Math.abs(treeRx - houseRx) < 300 && treeRy - houseRy > 0 && treeRy - houseRy < 500) {
+				canPlant = false;
 			}
 
 			if (canPlant) {

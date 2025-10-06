@@ -23,7 +23,7 @@ var Game = /** @class */ (function () {
         this.infoText = "";
         this.inventoryButtons = [];
         this.canOpenQuest = false;
-        this.testingMode = false;
+        this.testingMode = true;
         this.started = false;
         this.startButtonPos = [0, 0, 0, 0];
         this.ctx = ctx;
@@ -31,6 +31,11 @@ var Game = /** @class */ (function () {
     }
     Game.prototype.addEntity = function (entity) {
         this.entities.push(entity);
+    };
+    Game.prototype.playAudio = function (audio) {
+        var elem = this.graphics.loadAudio("audio/".concat(audio, ".wav"));
+        elem.volume = 0.5;
+        elem.play();
     };
     Game.prototype.renderHome = function () {
         if (this.started) {
@@ -203,9 +208,11 @@ var Game = /** @class */ (function () {
         if (key === "q") {
             if (this.questSelected) {
                 this.questSelected = false;
+                this.playAudio("blip");
             }
             else if (this.canOpenQuest) {
                 this.questSelected = true;
+                this.playAudio("blip");
             }
             this.encyclopediaSelected = false;
         }
@@ -248,6 +255,7 @@ var Game = /** @class */ (function () {
             var bp = this.startButtonPos;
             if (this.mousePos.x >= bp[0] && this.mousePos.x <= bp[0] + bp[2] &&
                 this.mousePos.y >= bp[1] && this.mousePos.y <= bp[1] + bp[3]) {
+                this.playAudio("select2");
                 this.start();
             }
             return;
@@ -291,13 +299,16 @@ var Game = /** @class */ (function () {
             return;
         }
         if (this.world.hoveredTile && !this.structureAtTile(this.world.hoveredTile)) {
+            this.selectingSeeds = false;
             if (this.world.selectedTile === this.world.hoveredTile) {
                 this.world.selectedTile = null;
             }
             else {
                 this.world.selectedTile = this.world.hoveredTile;
+                if (this.world.selectedTile.type === "tilled") {
+                    this.selectingSeeds = true;
+                }
             }
-            this.selectingSeeds = false;
         }
     };
     Game.prototype.onMouseUp = function () {

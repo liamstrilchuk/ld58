@@ -28,7 +28,7 @@ class Game {
 	public inventoryButtons: { x: number, y: number, w: number, h: number, item: string }[] = [];
 	public canOpenQuest = false;
 
-	public testingMode = false;
+	public testingMode = true;
 	public started = false;
 	private startButtonPos = [ 0, 0, 0, 0 ];
 
@@ -39,6 +39,12 @@ class Game {
 
 	public addEntity(entity: Entity) {
 		this.entities.push(entity);
+	}
+
+	public playAudio(audio: string) {
+		const elem = this.graphics.loadAudio(`audio/${audio}.wav`);
+		elem.volume = 0.5;
+		elem.play();
 	}
 
 	public renderHome() {
@@ -265,8 +271,10 @@ class Game {
 		if (key === "q") {
 			if (this.questSelected) {
 				this.questSelected = false;
+				this.playAudio("blip");
 			} else if (this.canOpenQuest) {
 				this.questSelected = true;
+				this.playAudio("blip");
 			}
 			this.encyclopediaSelected = false;
 		}
@@ -318,6 +326,7 @@ class Game {
 			const bp = this.startButtonPos;
 			if (this.mousePos.x >= bp[0] && this.mousePos.x <= bp[0] + bp[2] &&
 				this.mousePos.y >= bp[1] && this.mousePos.y <= bp[1] + bp[3]) {
+				this.playAudio("select2");
 				this.start();
 			}
 			return;
@@ -365,12 +374,15 @@ class Game {
 		}
 
 		if (this.world.hoveredTile && !this.structureAtTile(this.world.hoveredTile)) {
+			this.selectingSeeds = false;
 			if (this.world.selectedTile === this.world.hoveredTile) {
 				this.world.selectedTile = null;
 			} else {
 				this.world.selectedTile = this.world.hoveredTile;
+				if (this.world.selectedTile.type === "tilled") {
+					this.selectingSeeds = true;
+				}
 			}
-			this.selectingSeeds = false;
 		}
 	}
 

@@ -61,6 +61,7 @@ var World = /** @class */ (function () {
             }
         }
         game.player.y = this.WORLD_SIZE / 2 * game.TILE_SCALE * game.TILE_HEIGHT / 2 + game.TILE_HEIGHT * game.TILE_SCALE * 7;
+        var _a = Tile.renderPos(game, this.house.x + 2, this.house.y + 2), houseRx = _a.x, houseRy = _a.y;
         for (var i = 0; i < 200; i++) {
             var root = this.selectRandomTile();
             var canPlant = this.canPlaceStructure(root.x, root.y, 2, 2);
@@ -70,6 +71,10 @@ var World = /** @class */ (function () {
                         canPlant = false;
                     }
                 }
+            }
+            var _b = Tile.renderPos(game, root.x, root.y), treeRx = _b.x, treeRy = _b.y;
+            if (Math.abs(treeRx - houseRx) < 300 && treeRy - houseRy > 0 && treeRy - houseRy < 500) {
+                canPlant = false;
             }
             if (canPlant) {
                 this.structures.push(new Tree(game, root.x, root.y));

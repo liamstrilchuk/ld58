@@ -64,6 +64,7 @@ var Action = /** @class */ (function () {
                     break;
             }
             this.tile.stage = 0;
+            game.playAudio("plant");
         }
         if (this.action === "harvest") {
             switch (this.tile.type) {
@@ -102,8 +103,10 @@ var Action = /** @class */ (function () {
                     break;
             }
             this.tile.stage = 0;
+            game.playAudio("plant");
         }
         if (["flower", "grass", "red_flower", "sand"].includes(this.tile.type) && this.action === "till") {
+            game.playAudio("till");
             this.tile.changeType(game, "tilled");
         }
         if (this.action === "plant") {
@@ -133,6 +136,7 @@ var Action = /** @class */ (function () {
                     this.tile.changeType(game, "lavender_flower_tilled");
                     break;
             }
+            game.playAudio("plant");
         }
     };
     Action.actionTimes = {

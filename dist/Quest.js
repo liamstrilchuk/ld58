@@ -106,6 +106,7 @@ var Quest = /** @class */ (function () {
         this.lines = splitLines(ctx, text, 730);
     };
     Quest.prototype.nextPressed = function (game) {
+        game.playAudio("blip");
         if (!this.finishedRendering) {
             if (!this.complete) {
                 this.charactersDone = this.text.length;

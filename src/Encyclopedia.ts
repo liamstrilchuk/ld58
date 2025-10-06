@@ -80,11 +80,13 @@ class Encyclopedia {
 		if (x >= left + 150 && x <= left + 150 + 96 &&
 			y >= top + 595 && y <= top + 595 + 96) {
 			this.prevItem();
+			game.playAudio("select2");
 		}
 
 		if (x >= left + 520 && x <= left + 520 + 96 &&
 			y >= top + 595 && y <= top + 595 + 96) {
 			this.nextItem();
+			game.playAudio("select2");
 		}
 	}
 }

@@ -169,6 +169,8 @@ class Quest {
 	}
 
 	public nextPressed(game: Game) {
+		game.playAudio("blip");
+		
 		if (!this.finishedRendering) {
 			if (!this.complete) {
 				this.charactersDone = this.text.length;
