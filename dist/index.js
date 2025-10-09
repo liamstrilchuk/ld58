@@ -17,4 +17,5 @@ window.addEventListener("load", function () {
         canvas.height = window.innerHeight;
         ctx.imageSmoothingEnabled = false;
     });
+    window.addEventListener("contextmenu", function (event) { return event.preventDefault(); });
 });

@@ -44,4 +44,6 @@ window.addEventListener("load", () => {
 			ctx.imageSmoothingEnabled = false;
 		}
 	);
+
+	window.addEventListener("contextmenu", event => event.preventDefault());
 });
